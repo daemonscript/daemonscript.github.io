@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0f14">
+  <meta name="description" content="DaeMonScript is a community platform for developers to share practical notes, tutorials, and ideas.">
+  <title>DaeMonScript — Developer knowledge, shared</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --surface: #111821;
+      --surface-2: #151f2b;
+      --line: #263241;
+      --text: #e6edf3;
+      --muted: #9aa7b5;
+      --subtle: #718096;
+      --green: #38d996;
+      --green-soft: rgba(56, 217, 150, 0.12);
+      --blue: #6cb6ff;
+      --purple: #c792ea;
+      --orange: #f0ad4e;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 68px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(11, 15, 20, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      width: min(1420px, 100%);
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font: 700 17px/1 var(--mono);
+      letter-spacing: -0.7px;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 9px;
+      border: 1px solid rgba(56, 217, 150, 0.22);
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    .brand em {
+      font-style: normal;
+      color: var(--green);
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 520px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--subtle);
+    }
+
+    .search {
+      width: 100%;
+      height: 38px;
+      padding: 0 52px 0 40px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #0e141b;
+      color: var(--text);
+      outline: 0;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .search::placeholder { color: #77869a; }
+    .search:focus {
+      border-color: rgba(56, 217, 150, 0.7);
+      box-shadow: 0 0 0 3px rgba(56, 217, 150, 0.08);
+    }
+
+    .keyhint {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      padding: 2px 6px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--subtle);
+      background: rgba(17, 24, 33, 0.8);
+      font: 11px var(--mono);
+    }
+
+    .topnav {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .topnav a:hover { color: var(--text); }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      border-color: var(--line);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .write-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(56, 217, 150, 0.4);
+      border-radius: 9px;
+      padding: 9px 13px;
+      background: var(--green);
+      color: #07140e;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .write-button:hover {
+      background: #61e9a9;
+      transform: translateY(-1px);
+    }
+
+    .avatar {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #8de8b9, #4ea8c9);
+      color: #09141c;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .layout {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      padding: 32px 32px 80px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 270px;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .left-sidebar, .right-sidebar {
+      position: sticky;
+      top: 94px;
+    }
+
+    .side-label {
+      margin: 0 0 12px 10px;
+      color: var(--subtle);
+      font: 10px var(--mono);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .side-nav { display: grid; gap: 4px; }
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 11px;
+      border-radius: 9px;
+      color: var(--muted);
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .side-link svg { flex: 0 0 auto; }
+    .side-link:hover, .side-link.active {
+      background: var(--surface);
+      color: var(--text);
+    }
+    .side-link.active { box-shadow: inset 2px 0 var(--green); }
+    .side-link.active svg { color: var(--green); }
+    .side-link .count {
+      margin-left: auto;
+      color: var(--subtle);
+      font: 11px var(--mono);
+    }
+
+    .side-divider {
+      margin: 20px 0;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .topic-list { display: grid; gap: 4px; }
+    .topic-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .topic-link:hover, .topic-link.selected {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .topic-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 3px;
+      background: var(--green);
+      flex: 0 0 auto;
+    }
+    .topic-dot.js { background: #f0db4f; }
+    .topic-dot.py { background: #6cb6ff; }
+    .topic-dot.devops { background: #c792ea; }
+    .topic-dot.css { background: #ff8e72; }
+
+    .topic-link .count {
+      margin-left: auto;
+      color: var(--subtle);
+      font: 10px var(--mono);
+    }
+
+    .sidebar-footer {
+      margin-top: 28px;
+      color: var(--subtle);
+      font-size: 11px;
+      line-height: 1.9;
+    }
+    .sidebar-footer a { color: var(--muted); }
+
+    .main-column { min-width: 0; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 26px;
+      min-height: 205px;
+      padding: 28px 30px 26px;
+      border: 1px solid #263a38;
+      border-radius: 15px;
+      background:
+        radial-gradient(ellipse at 82% 12%, rgba(56, 217, 150, 0.14), transparent 30%),
+        linear-gradient(115deg, #101a1c 0%, #101720 75%);
+    }
+
+    .hero:after {
+      content: "{ }";
+      position: absolute;
+      right: 18px;
+      bottom: -32px;
+      font: 140px/1 var(--mono);
+      color: rgba(56, 217, 150, 0.08);
+      letter-spacing: -18px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font: 11px var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 14px var(--green);
+    }
+
+    h1 {
+      margin: 14px 0 8px;
+      max-width: 620px;
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+    }
+
+    .accent { color: var(--green); }
+
+    .hero p {
+      max-width: 530px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(17, 24, 33, 0.8);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .secondary-button:hover {
+      border-color: #44576a;
+      background: var(--surface-2);
+    }
+
+    .feed-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .feed-tabs {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      flex: 1;
+    }
+
+    .feed-tab {
+      position: relative;
+      padding: 0 0 12px;
+      border: 0;
+      background: none;
+      color: var(--subtle);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .feed-tab:hover { color: var(--text); }
+    .feed-tab.active {
+      color: var(--text);
+      font-weight: 650;
+    }
+    .feed-tab.active:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--green);
+    }
+
+    .filter-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .filter-button:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .post-list { display: grid; gap: 12px; }
+
+    .post-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      padding: 18px 19px 14px;
+      transition: border-color .2s ease, transform .2s ease, background .2s ease;
+    }
+
+    .post-card:hover {
+      border-color: #39495b;
+      background: #131d28;
+      transform: translateY(-1px);
+    }
+
+    .post-card[hidden] { display: none; }
+
+    .post-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .author-avatar {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.1);
+      background: linear-gradient(145deg, #a4e7d0, #5ba6b7);
+      color: #06151e;
+      font-size: 10px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+    .author-avatar.orange { background: linear-gradient(145deg, #ffc27b, #de8066); }
+    .author-avatar.purple { background: linear-gradient(145deg, #d9a8f3, #9074cc); }
+    .author-avatar.blue { background: linear-gradient(145deg, #a7d6ff, #5a95d2); }
+
+    .author-name { color: var(--text); font-size: 12px; font-weight: 620; }
+    .author-handle, .post-time { color: var(--subtle); font-size: 11px; }
+    .meta-dot { color: #566273; margin: 0 5px; }
+
+    .post-menu {
+      border: 0;
+      background: transparent;
+      color: var(--subtle);
+      padding: 4px;
+      cursor: pointer;
+    }
+    .post-menu:hover { color: var(--text); }
+
+    .post-title {
+      margin: 14px 0 7px;
+      font-size: 17px;
+      letter-spacing: -0.35px;
+      line-height: 1.35;
+      font-weight: 690;
+    }
+    .post-title a:hover { color: var(--green); }
+
+    .post-excerpt {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+
+    .inline-code {
+      display: inline-block;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #21332e;
+      background: #0b1417;
+      color: #a7dfca;
+      font: 11px var(--mono);
+    }
+
+    .code-preview {
+      margin-top: 12px;
+      padding: 11px 13px;
+      border: 1px solid #25333d;
+      border-radius: 8px;
+      background: #0b1117;
+      color: #b6c4cf;
+      font: 11px/1.7 var(--mono);
+      white-space: pre;
+      overflow: auto;
+    }
+    .code-preview .kw { color: #c792ea; }
+    .code-preview .fn { color: #82aaff; }
+    .code-preview .str { color: #c3e88d; }
+    .code-preview .comment { color: #657b83; }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .tag {
+      border: 1px solid #293744;
+      background: #151f28;
+      color: #a9bac8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font: 10px var(--mono);
+      cursor: pointer;
+    }
+    .tag:hover {
+      border-color: rgba(56, 217, 150, 0.4);
+      color: var(--green);
+    }
+
+    .post-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px solid rgba(38,50,65,.75);
+      color: var(--subtle);
+    }
+
+    .post-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--subtle);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .post-stat svg { color: #78889a; }
+    .post-stat:hover, .post-stat.is-active { color: var(--green); }
+    .post-stat.is-active svg { color: var(--green); }
+
+    .read-time {
+      margin-left: auto;
+      font-size: 10px;
+    }
+
+    .empty-state {
+      display: none;
+      margin-top: 14px;
+      padding: 36px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .right-sidebar {
+      display: grid;
+      gap: 16px;
+    }
+
+    .widget {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .widget-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 15px 12px;
+    }
+
+    .widget-title {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .widget-link {
+      color: var(--green);
+      font: 10px var(--mono);
+    }
+
+    .trending-list { display: grid; }
+    .trending-item {
+      display: flex;
+      gap: 11px;
+      padding: 11px 15px;
+      border-top: 1px solid rgba(38,50,65,.7);
+    }
+    .trend-number {
+      flex: 0 0 auto;
+      width: 18px;
+      color: #526174;
+      font: 12px var(--mono);
+    }
+    .trend-title {
+      margin: 0 0 5px;
+      font-size: 11px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+    .trend-title a:hover { color: var(--green); }
+    .trend-meta { color: var(--subtle); font-size: 10px; }
+
+    .topic-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 0 15px 15px;
+    }
+    .cloud-tag {
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0e151d;
+      color: var(--muted);
+      font: 10px var(--mono);
+      cursor: pointer;
+    }
+    .cloud-tag:hover {
+      color: var(--green);
+      border-color: rgba(56, 217, 150, 0.4);
+    }
+
+    .join-widget {
+      position: relative;
+      padding: 17px;
+      background: radial-gradient(ellipse at 100% 0, rgba(56,217,150,.12), transparent 50%), var(--surface);
+    }
+    .mini-logo {
+      color: var(--green);
+      font: 12px var(--mono);
+    }
+    .join-widget h3 {
+      margin: 10px 0 6px;
+      font-size: 14px;
+    }
+    .join-widget p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .join-button {
+      width: 100%;
+      padding: 9px;
+      border: 1px solid rgba(56,217,150,.35);
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .join-button:hover { background: rgba(56,217,150,.2); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      padding: 11px 16px;
+      border: 1px solid #315244;
+      border-radius: 9px;
+      background: #13221b;
+      color: #c2f5dc;
+      box-shadow: 0 10px 40px rgba(0,0,0,.4);
+      font-size: 12px;
+      pointer-events: none;
+      transition: transform .2s ease, opacity .2s ease;
+      z-index: 50;
+    }
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(2,7,10,.75);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #101720;
+      border: 1px solid #344354;
+      border-radius: 14px;
+      box-shadow: 0 25px 100px rgba(0,0,0,.55);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+    .modal-close {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .write-form {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .form-label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0b1117;
+      color: var(--text);
+      outline: none;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: rgba(56,217,150,.6);
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: #657386; }
+    .form-textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    .form-hint { color: var(--subtle); font-size: 10px; }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .cancel-button {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .mobile-nav { display: none; }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 190px minmax(0,1fr); gap: 26px; }
+      .right-sidebar { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { height: 60px; }
+      .topbar-inner { padding: 0 16px; gap: 12px; }
+      .topnav, .top-actions .icon-button, .top-actions .avatar { display: none; }
+      .search-wrap { max-width: none; }
+      .search { height: 35px; }
+      .keyhint { display: none; }
+      .search-wrap svg { left: 10px; }
+      .search { padding-left: 34px; }
+      .layout { display: block; padding: 22px 16px 88px; }
+      .left-sidebar { display: none; }
+      .hero { padding: 23px 20px; min-height: unset; }
+      .hero:after { font-size: 100px; right: 8px; }
+      .feed-heading { gap: 10px; }
+      .feed-tabs { gap: 16px; }
+      .filter-button { padding: 8px; }
+      .post-card { padding: 15px; }
+      .post-title { font-size: 16px; }
+      .mobile-nav {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 19;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 8px 10px max(8px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--line);
+        background: rgba(11,15,20,.96);
+        backdrop-filter: blur(14px);
+      }
+      .mobile-nav a {
+        display: grid;
+        justify-items: center;
+        gap: 4px;
+        color: var(--subtle);
+        font-size: 9px;
+      }
+      .mobile-nav a.active { color: var(--green); }
+    }
+
+    @media (max-width: 430px) {
+      .brand { font-size: 13px; }
+      .brand-mark { width: 25px; height: 25px; }
+      .write-button { width: 34px; height: 34px; padding: 0; font-size: 0; }
+      .write-button svg { display: block; }
+      .feed-tabs { gap: 12px; }
+      .feed-tab { font-size: 12px; }
+      .post-footer { gap: 12px; }
+      .author-handle { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#home" aria-label="DaeMonScript home"><span class="brand-mark">&gt;_</span><span>DaeMon<em>Script</em></span></a>
+      <label class="search-wrap" aria-label="Search posts">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="searchInput" class="search" type="search" placeholder="Search posts, topics, people..." autocomplete="off">
+        <span class="keyhint">⌘ K</span>
+      </label>
+      <nav class="topnav" aria-label="Main navigation">
+        <a href="#explore">Explore</a>
+        <a href="#topics">Topics</a>
+        <a href="#about">About</a>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-button" type="button" id="savedShortcut" aria-label="Saved posts">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg>
+        </button>
+        <button class="write-button open-compose" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Write a post</button>
+        <div class="avatar" title="Your profile">DS</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout" id="home">
+    <aside class="left-sidebar" aria-label="Sidebar navigation">
+      <p class="side-label">Workspace</p>
+      <nav class="side-nav">
+        <a class="side-link active" href="#feed" data-feed="Latest"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg>Feed</a>
+        <a class="side-link" href="#explore"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M11 7v8M7 11h8"/></svg>Explore</a>
+        <a class="side-link" href="#topics"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg>Reading list<span class="count" id="savedCount">0</span></a>
+      </nav>
+      <div class="side-divider"></div>
+      <p class="side-label" id="topics">Topics</p>
+      <div class="topic-list">
+        <a class="topic-link" data-filter="javascript"><span class="topic-dot js"></span>JavaScript<span class="count">2.4k</span></a>
+        <a class="topic-link" data-filter="python"><span class="topic-dot py"></span>Python<span class="count">1.8k</span></a>
+        <a class="topic-link" data-filter="devops"><span class="topic-dot devops"></span>DevOps<span class="count">986</span></a>
+        <a class="topic-link" data-filter="css"><span class="topic-dot css"></span>CSS &amp; UI<span class="count">752</span></a>
+        <a class="topic-link" data-filter="database"><span class="topic-dot" style="background:#e8a65b"></span>Databases<span class="count">614</span></a>
+      </div>
+      <div class="side-divider"></div>
+      <a class="side-link" href="#about"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>About the community</a>
+      <div class="sidebar-footer">
+        <div>Built for curious minds. <span style="color:var(--green)">♥</span></div>
+        <a href="#guidelines">Community guidelines</a> · <a href="#privacy">Privacy</a><br>
+        © 2025 DaeMonScript
+      </div>
+    </aside>
+
+    <main class="main-column" id="feed">
+      <section class="hero" id="about">
+        <div class="eyebrow"><span class="live-dot"></span> The developer community</div>
+        <h1>Good code starts with<br><span class="accent">sharing what you know.</span></h1>
+        <p>Practical notes, deep dives, and ideas from developers building things. Learn something new, then pass it on.</p>
+        <div class="hero-actions">
+          <button class="write-button open-compose" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Share your knowledge</button>
+          <button class="secondary-button" id="exploreButton" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg>Explore topics</button>
+        </div>
+      </section>
+
+      <section id="explore" aria-label="Developer feed">
+        <div class="feed-heading">
+          <div class="feed-tabs" role="tablist" aria-label="Post feed">
+            <button class="feed-tab active" role="tab" aria-selected="true" type="button" data-sort="Latest">Latest</button>
+            <button class="feed-tab" role="tab" aria-selected="false" type="button" data-sort="Top">Top</button>
+            <button class="feed-tab" role="tab" aria-selected="false" type="button" data-sort="Following">Following</button>
+          </div>
+          <button class="filter-button" id="filterButton" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M7 12h10m-7 5h4"/></svg><span>Filters</span></button>
+        </div>
+
+        <div class="post-list" id="postList">
+          <article class="post-card" data-tags="javascript backend api performance" data-score="92" data-author="maya">
+            <div class="post-topline">
+              <div class="author">
+                <div class="author-avatar">MC</div>
+                <div><span class="author-name">Maya Chen</span><span class="meta-dot">·</span><span class="author-handle">@mayacodes</span><span class="meta-dot">·</span><span class="post-time">2h ago</span></div>
+              </div>
+              <button class="post-menu" type="button" aria-label="More options">•••</button>
+            </div>
+            <h2 class="post-title"><a href="#post-1" class="post-open">A tiny pattern that made our API responses 3× faster</a></h2>
+            <p class="post-excerpt">We were serializing the same nested objects on every request. Here's how a small change to our <code class="inline-code">toJSON()</code> layer cut response times without adding a cache.</p>
+            <div class="code-preview"><span class="comment">// Before: rebuilding this on every call</span>
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">buildResponse</span>(record);</div>
+            <div class="post-tags"><button class="tag" type="button">#javascript</button><button class="tag" type="button">#backend</button><button class="tag" type="button">#performance</button></div>
+            <div class="post-footer">
+              <button class="post-stat like-button" type="button" aria-label="Like post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 11h10.3a2 2 0 0 0 2-1.7l1.2-7A2 2 0 0 0 18.5 10H14l.7-3.2A2.3 2.3 0 0 0 12.5 4L7 10z"/></svg><span class="like-count">128</span></button>
+              <span class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>24</span>
+              <button class="post-stat bookmark-button" type="button" aria-label="Save post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg></button>
+              <span class="read-time">5 min read</span>
+            </div>
+          </article>
+
+          <article class="post-card" data-tags="python database tips" data-score="75" data-author="jonah">
+            <div class="post-topline">
+              <div class="author">
+                <div class="author-avatar orange">JP</div>
+                <div><span class="author-name">Jonah Park</span><span class="meta-dot">·</span><span class="author-handle">@jonahbuilds</span><span class="meta-dot">·</span><span class="post-time">4h ago</span></div>
+              </div>
+              <button class="post-menu" type="button" aria-label="More options">•••</button>
+            </div>
+            <h2 class="post-title"><a href="#post-2" class="post-open">The one SQL index I wish I had added sooner</a></h2>
+            <p class="post-excerpt">A quick field note on composite indexes, query plans, and the 400ms endpoint that became 12ms. Includes the <code class="inline-code">EXPLAIN ANALYZE</code> output that finally made it click for me.</p>
+            <div class="post-tags"><button class="tag" type="button">#database</button><button class="tag" type="button">#postgres</button><button class="tag" type="button">#performance</button></div>
+            <div class="post-footer">
+              <button class="post-stat like-button" type="button" aria-label="Like post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 11h10.3a2 2 0 0 0 2-1.7l1.2-7A2 2 0 0 0 18.5 10H14l.7-3.2A2.3 2.3 0 0 0 12.5 4L7 10z"/></svg><span class="like-count">86</span></button>
+              <span class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>18</span>
+              <button class="post-stat bookmark-button" type="button" aria-label="Save post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg></button>
+              <span class="read-time">7 min read</span>
+            </div>
+          </article>
+
+          <article class="post-card" data-tags="css design frontend" data-score="61" data-author="rhea">
+            <div class="post-topline">
+              <div class="author">
+                <div class="author-avatar purple">RL</div>
+                <div><span class="author-name">Rhea Lewis</span><span class="meta-dot">·</span><span class="author-handle">@rheaux</span><span class="meta-dot">·</span><span class="post-time">6h ago</span></div>
+              </div>
+              <button class="post-menu" type="button" aria-label="More options">•••</button>
+            </div>
+            <h2 class="post-title"><a href="#post-3" class="post-open">CSS container queries finally made this component reusable</a></h2>
+            <p class="post-excerpt">No more viewport breakpoints for a card that lives in three different layouts. A small before-and-after with a pattern you can drop into your project today.</p>
+            <div class="post-tags"><button class="tag" type="button">#css</button><button class="tag" type="button">#frontend</button><button class="tag" type="button">#design</button></div>
+            <div class="post-footer">
+              <button class="post-stat like-button" type="button" aria-label="Like post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 11h10.3a2 2 0 0 0 2-1.7l1.2-7A2 2 0 0 0 18.5 10H14l.7-3.2A2.3 2.3 0 0 0 12.5 4L7 10z"/></svg><span class="like-count">54</span></button>
+              <span class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>9</span>
+              <button class="post-stat bookmark-button" type="button" aria-label="Save post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg></button>
+              <span class="read-time">4 min read</span>
+            </div>
+          </article>
+
+          <article class="post-card" data-tags="devops linux tools" data-score="43" data-author="sam">
+            <div class="post-topline">
+              <div class="author">
+                <div class="author-avatar blue">SK</div>
+                <div><span class="author-name">Sam Kim</span><span class="meta-dot">·</span><span class="author-handle">@samkdev</span><span class="meta-dot">·</span><span class="post-time">yesterday</span></div>
+              </div>
+              <button class="post-menu" type="button" aria-label="More options">•••</button>
+            </div>
+            <h2 class="post-title"><a href="#post-4" class="post-open">My terminal setup for staying in flow (2025 edition)</a></h2>
+            <p class="post-excerpt">A tour of the small tools that make my daily loop feel fast: shell aliases, fuzzy finding, sensible defaults, and one config I wish I knew about years ago.</p>
+            <div class="post-tags"><button class="tag" type="button">#devops</button><button class="tag" type="button">#linux</button><button class="tag" type="button">#tools</button></div>
+            <div class="post-footer">
+              <button class="post-stat like-button" type="button" aria-label="Like post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 11h10.3a2 2 0 0 0 2-1.7l1.2-7A2 2 0 0 0 18.5 10H14l.7-3.2A2.3 2.3 0 0 0 12.5 4L7 10z"/></svg><span class="like-count">39</span></button>
+              <span class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>12</span>
+              <button class="post-stat bookmark-button" type="button" aria-label="Save post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg></button>
+              <span class="read-time">6 min read</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="empty-state" id="emptyState"><strong>No posts found</strong>Try a different search or topic.</div>
+      </section>
+    </main>
+
+    <aside class="right-sidebar" aria-label="Discover more">
+      <section class="widget">
+        <div class="widget-head"><h2 class="widget-title">Trending this week</h2><a class="widget-link" href="#explore">See all ↗</a></div>
+        <div class="trending-list">
+          <div class="trending-item"><span class="trend-number">01</span><div><p class="trend-title"><a href="#post-1">What I learned migrating a monolith to services</a></p><span class="trend-meta">Maya Chen · 1.2k reads</span></div></div>
+          <div class="trending-item"><span class="trend-number">02</span><div><p class="trend-title"><a href="#post-2">Postgres indexes explained with visual examples</a></p><span class="trend-meta">Arjun Rao · 892 reads</span></div></div>
+          <div class="trending-item"><span class="trend-number">03</span><div><p class="trend-title"><a href="#post-3">A practical guide to accessible color systems</a></p><span class="trend-meta">Rhea Lewis · 746 reads</span></div></div>
+        </div>
+      </section>
+
+      <section class="widget" id="topic-widget">
+        <div class="widget-head"><h2 class="widget-title">Explore topics</h2><a class="widget-link" href="#topics">Browse all ↗</a></div>
+        <div class="topic-cloud">
+          <button class="cloud-tag" type="button" data-filter="javascript">#javascript</button>
+          <button class="cloud-tag" type="button" data-filter="python">#python</button>
+          <button class="cloud-tag" type="button" data-filter="devops">#devops</button>
+          <button class="cloud-tag" type="button" data-filter="css">#css</button>
+          <button class="cloud-tag" type="button" data-filter="database">#database</button>
+          <button class="cloud-tag" type="button" data-filter="ai">#ai</button>
+          <button class="cloud-tag" type="button" data-filter="career">#career</button>
+          <button class="cloud-tag" type="button" data-filter="opensource">#opensource</button>
+        </div>
+      </section>
+
+      <section class="widget join-widget">
+        <div class="mini-logo">&gt;_ DaeMonScript</div>
+        <h3>Build in public. Learn together.</h3>
+        <p>Join developers sharing the things they wish they knew sooner.</p>
+        <button class="join-button" id="joinButton" type="button">Join the community →</button>
+      </section>
+    </aside>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <a class="active" href="#feed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg>Feed</a>
+    <a href="#explore"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Explore</a>
+    <a href="#" class="open-compose-mobile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>Write</a>
+    <a href="#saved" id="mobileSaved"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg>Saved</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="composeModal" role="dialog" aria-modal="true" aria-labelledby="composeTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="composeTitle">Share something useful</h2>
+        <button type="button" class="modal-close" aria-label="Close dialog">×</button>
+      </div>
+      <form class="write-form" id="composeForm">
+        <label class="form-label">Post title
+          <input class="form-input" id="postTitleInput" maxlength="120" placeholder="A clear, helpful title" required>
+        </label>
+        <label class="form-label">What did you learn?
+          <textarea class="form-textarea" id="postBodyInput" maxlength="1200" placeholder="Share a practical tip, a solution you found, or a lesson from your latest project..." required></textarea>
+          <span class="form-hint">Markdown-friendly · Keep it kind and useful.</span>
+        </label>
+        <label class="form-label">Topics
+          <input class="form-input" id="postTagsInput" placeholder="javascript, learning, tools">
+        </label>
+        <div class="form-actions">
+          <button type="button" class="cancel-button">Cancel</button>
+          <button class="write-button" type="submit">Publish post →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const searchInput = document.getElementById('searchInput');
+      const cards = [...document.querySelectorAll('.post-card')];
+      const emptyState = document.getElementById('emptyState');
+      const toast = document.getElementById('toast');
+      const modal = document.getElementById('composeModal');
+      let activeFilter = '';
+      let activeFeed = 'Latest';
+      let toastTimer;
+      const saved = new Set(JSON.parse(localStorage.getItem('daemonscript-saved') || '[]'));
+
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+      };
+
+      const updateSavedCount = () => {
+        document.getElementById('savedCount').textContent = saved.size;
+      };
+
+      cards.forEach((card, index) => {
+        if (saved.has(String(index))) card.querySelector('.bookmark-button').classList.add('is-active');
+      });
+      updateSavedCount();
+
+      function filterPosts() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visible = 0;
+
+        cards.forEach(card => {
+          const matchesText = !query || card.textContent.toLowerCase().includes(query);
+          const matchesTopic = !activeFilter || card.dataset.tags.split(' ').includes(activeFilter);
+          const matchesSaved = activeFeed !== 'Saved' || card.querySelector('.bookmark-button').classList.contains('is-active');
+          const matchesFollowing = activeFeed !== 'Following' || ['maya', 'rhea'].includes(card.dataset.author);
+          const show = matchesText && matchesTopic && matchesSaved && matchesFollowing;
+
+          card.hidden = !show;
+          if (show) visible++;
+        });
+
+        emptyState.style.display = visible ? 'none' : 'block';
+
+        if (activeFeed === 'Top') {
+          [...cards].sort((a, b) => Number(b.dataset.score) - Number(a.dataset.score)).forEach(card => document.getElementById('postList').append(card));
+        } else {
+          [...cards].sort((a, b) => cards.indexOf(a) - cards.indexOf(b)).forEach(card => document.getElementById('postList').append(card));
+        }
+      }
+
+      const closeModal = () => modal.classList.remove('open');
+      const openModal = () => {
+        modal.classList.add('open');
+        document.getElementById('postTitleInput').focus();
+      };
+
+      searchInput.addEventListener('input', filterPosts);
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.key === 'Escape') closeModal();
+      });
+
+      document.querySelectorAll('.feed-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.feed-tab').forEach(item => {
+            item.classList.remove('active');
+            item.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          activeFeed = tab.dataset.sort;
+          document.querySelectorAll('.side-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.feed === activeFeed);
+          });
+          filterPosts();
+        });
+      });
+
+      document.querySelectorAll('.topic-link[data-filter], .cloud-tag[data-filter], .tag').forEach(button => {
+        button.addEventListener('click', () => {
+          const nextTopic = button.dataset.filter || button.textContent.replace('#','').trim();
+          activeFilter = activeFilter === nextTopic ? '' : nextTopic;
+
+          document.querySelectorAll('.topic-link').forEach(item => {
+            item.classList.toggle('selected', item.dataset.filter === activeFilter);
+          });
+
+          searchInput.value = '';
+          if (activeFeed === 'Saved') {
+            activeFeed = 'Latest';
+            document.querySelector('[data-sort="Latest"]').click();
+          }
+
+          filterPosts();
+          document.getElementById('feed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          showToast(activeFilter ? `Showing #${activeFilter} posts` : 'Topic filter cleared');
+        });
+      });
+
+      document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const count = button.querySelector('.like-count');
+          const liked = button.classList.toggle('is-active');
+          count.textContent = Number(count.textContent) + (liked ? 1 : -1);
+        });
+      });
+
+      document.querySelectorAll('.bookmark-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const key = String(cards.indexOf(button.closest('.post-card')));
+          button.classList.toggle('is-active');
+
+          if (button.classList.contains('is-active')) saved.add(key); else saved.delete(key);
+          localStorage.setItem('daemonscript-saved', JSON.stringify([...saved]));
+          updateSavedCount();
+          filterPosts();
+          showToast(button.classList.contains('is-active') ? 'Added to your reading list' : 'Removed from your reading list');
+        });
+      });
+
+      document.querySelectorAll('.open-compose').forEach(button => button.addEventListener('click', openModal));
+      document.querySelector('.open-compose-mobile').addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+      });
+      document.querySelector('.modal-close').addEventListener('click', closeModal);
+      document.querySelector('.cancel-button').addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      document.getElementById('composeForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('postTitleInput').value.trim();
+        const body = document.getElementById('postBodyInput').value.trim();
+        const tags = document.getElementById('postTagsInput').value
+          .toLowerCase()
+          .split(',')
+          .map(tag => tag.trim().replace(/^#/, ''))
+          .filter(Boolean);
+
+        const card = document.createElement('article');
+        card.className = 'post-card';
+        card.dataset.tags = tags.join(' ') || 'general';
+        card.dataset.score = '0';
+        card.dataset.author = 'you';
+
+        const head = document.createElement('div');
+        head.className = 'post-topline';
+        head.innerHTML = '<div class="author"><div class="author-avatar">DS</div><div><span class="author-name">You</span><span class="meta-dot">·</span><span class="post-time">just now</span></div></div>';
+
+        const heading = document.createElement('h2');
+        heading.className = 'post-title';
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = title;
+        heading.appendChild(link);
+
+        const excerpt = document.createElement('p');
+        excerpt.className = 'post-excerpt';
+        excerpt.textContent = body;
+
+        const tagWrap = document.createElement('div');
+        tagWrap.className = 'post-tags';
+        tags.forEach(tag => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'tag';
+          chip.textContent = '#' + tag;
+          chip.addEventListener('click', () => {
+            activeFilter = tag;
+            filterPosts();
+          });
+          tagWrap.appendChild(chip);
+        });
+
+        const footer = document.createElement('div');
+        footer.className = 'post-footer';
+        footer.innerHTML = '<button class="post-stat like-button" type="button" aria-label="Like post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 11h10.3a2 2 0 0 0 2-1.7l1.2-7A2 2 0 0 0 18.5 10H14l.7-3.2A2.3 2.3 0 0 0 12.5 4L7 10z"/></svg><span class="like-count">0</span></button><span class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>0</span><button class="post-stat bookmark-button" type="button" aria-label="Save post"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-4-6 4z"/></svg></button><span class="read-time">2 min read</span>';
+
+        card.append(head, heading, excerpt, tagWrap, footer);
+        document.getElementById('postList').prepend(card);
+        cards.unshift(card);
+
+        document.getElementById('composeForm').reset();
+        closeModal();
+        activeFilter = '';
+        activeFeed = 'Latest';
+        document.querySelector('[data-sort="Latest"]').click();
+        showToast('Your post is live in this preview!');
+      });
+
+      document.getElementById('savedShortcut').addEventListener('click', () => {
+        activeFeed = 'Saved';
+        activeFilter = '';
+        searchInput.value = '';
+        document.querySelectorAll('.feed-tab').forEach(tab => {
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected', 'false');
+        });
+        filterPosts();
+        document.getElementById('feed').scrollIntoView({ behavior: 'smooth' });
+        showToast('Showing your reading list');
+      });
+
+      document.getElementById('mobileSaved').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('savedShortcut').click();
+      });
+
+      document.getElementById('exploreButton').addEventListener('click', () => {
+        document.getElementById('topic-widget').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+
+      document.getElementById('filterButton').addEventListener('click', () => {
+        activeFilter = activeFilter ? '' : 'javascript';
+        document.querySelectorAll('.topic-link').forEach(item => {
+          item.classList.toggle('selected', item.dataset.filter === activeFilter);
+        });
+        filterPosts();
+        showToast(activeFilter ? 'Quick filter: JavaScript' : 'Filters cleared');
+      });
+
+      document.getElementById('joinButton').addEventListener('click', () => {
+        showToast('Community sign-up is coming soon!');
+      });
+
+      document.querySelectorAll('.post-open, .trending-item a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          showToast('Full article pages are coming soon!');
+        });
+      });
+
+      document.querySelectorAll('.post-menu').forEach(button => {
+        button.addEventListener('click', () => showToast('More post options are coming soon.'));
+      });
+    })();
+  </script>
+</body>
+</html>
