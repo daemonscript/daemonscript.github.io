@@ -1,122 +1,44 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Geometry Dash — Arcadia</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#10121f"><title>Geometry Dash — DaeMonScript Gaming</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
-  body{font-family:Inter,system-ui,sans-serif;background:#0A0A12;color:#ECECF5;overflow:hidden;display:flex;align-items:center;justify-content:center}
-  #wrap{position:relative;width:100%;max-width:900px;aspect-ratio:16/10;margin:auto}
-  canvas{width:100%;height:100%;display:block;background:#0A0A12;border-radius:14px;border:1px solid rgba(255,255,255,.08)}
-  .hud{position:absolute;top:12px;left:14px;right:14px;display:flex;justify-content:space-between;pointer-events:none}
-  .hud .s{background:rgba(10,10,18,.7);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 12px;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;backdrop-filter:blur(6px)}
-  .hud .s span{color:#9a9ab5;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-right:6px}
-  .ov{position:absolute;inset:0;display:grid;place-items:center;background:rgba(10,10,18,.82);backdrop-filter:blur(4px);border-radius:14px;text-align:center}
-  .ov.hide{display:none}
-  .ov h2{font-family:Syne,sans-serif;font-size:30px;margin-bottom:6px}
-  .ov p{color:#9a9ab5;margin-bottom:8px;font-size:14px}
-  .btn{padding:12px 22px;border-radius:11px;background:linear-gradient(90deg,#7C3AED,#9333ea);color:#fff;font-weight:600;border:none;cursor:pointer;font-size:15px}
-  .btn:hover{filter:brightness(1.1)}
-</style>
-</head>
-<body>
-<div id="wrap">
-  <canvas id="c" width="900" height="562"></canvas>
-  <div class="hud"><div class="s"><span>Progress</span><b id="sc">0%</b></div><div class="s"><span>Best</span><b id="bs">0%</b></div></div>
-  <div class="ov" id="st"><div><h2>Geometry Dash</h2><p>Tap to jump. Land on platforms, dodge the spikes.</p><p style="margin-bottom:14px;font-size:12px">Space / click / tap</p><button class="btn" id="start">Start</button></div></div>
-  <div class="ov hide" id="go"><div><h2 style="color:#f43f5e">Crashed</h2><p id="gos">Best: 0%</p><button class="btn" id="again" style="margin-top:8px">Retry</button></div></div>
-</div>
+:root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;--cyan:#36e0e8;--purple:#8b5cf6;--bg:#0b0d18}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#f4f6ff}body{min-height:100vh;display:flex;flex-direction:column}.top{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,calc((100% - 1100px)/2));background:#111522;border-bottom:1px solid #282b43}.top a{color:#a9dff4;text-decoration:none;font-size:12px}.brand{font-weight:800;letter-spacing:1.5px;color:#fff!important}.brand span{color:var(--cyan)}main{width:min(1100px,100%);margin:auto;padding:22px 18px 35px}.crumb{font-size:10px;color:#8992ad;letter-spacing:1.5px;margin-bottom:9px}.head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:16px}.head h1{font-size:25px;letter-spacing:-.5px;margin:0 0 5px}.head p{margin:0;color:#929bb7;font-size:11px}.pill{font-size:10px;color:#9feaf0;border:1px solid #315a6b;padding:7px 10px}.gamebox{position:relative;background:#090b16;border:1px solid #333751;box-shadow:0 18px 50px #0008;overflow:hidden}canvas{width:100%;height:auto;display:block;touch-action:none}.hud{position:absolute;top:12px;left:14px;right:14px;display:flex;justify-content:space-between;pointer-events:none}.stat{background:#0c1021d9;border:1px solid #ffffff24;padding:7px 11px;font-size:11px;color:#9da9c7;min-width:90px}.stat b{color:#fff;font-size:15px;margin-left:6px}.progress{position:absolute;left:0;right:0;bottom:0;height:4px;background:#20243a}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width .08s linear}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#090b16d9;text-align:center;padding:20px}.overlay.hidden{display:none}.dialog{width:min(390px,100%);padding:24px 20px;background:#151a2b;border:1px solid #414866;box-shadow:0 14px 50px #0009}.dialog .tag{font-size:9px;color:var(--cyan);letter-spacing:2px}.dialog h2{font-size:27px;margin:9px 0}.dialog p{font-size:12px;color:#a5aec8;line-height:1.6;margin:7px 0 17px}.primary{border:0;background:linear-gradient(90deg,#6d4ce5,#1fbaca);color:white;padding:12px 25px;font-weight:800;cursor:pointer}.secondary{border:1px solid #46506c;background:#20263a;color:#dce4ff;padding:11px 17px;cursor:pointer}.actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.below{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:14px}.panel{padding:15px 17px;background:#141827;border:1px solid #292e45}.panel h3{font-size:11px;letter-spacing:1px;margin:0 0 8px;color:#dbe7f4}.panel p{font-size:11px;color:#929bb3;line-height:1.65;margin:0}.levels{display:flex;gap:7px;flex-wrap:wrap}.level{border:1px solid #39435d;background:#1a2033;color:#cbd5ed;padding:8px 11px;font-size:10px;cursor:pointer}.level.active{border-color:var(--cyan);color:#a9f7f7;background:#12303a}.controls{display:flex;gap:7px;margin-top:10px}.controls button{border:1px solid #39435d;background:#171d30;color:#cbd5ed;padding:8px 12px;font-size:10px;cursor:pointer}.foot{font-size:10px;color:#68738e;text-align:center;margin:18px 0 0}@media(max-width:650px){.top{height:52px;padding:0 13px}main{padding:16px 10px 25px}.head{align-items:start;flex-direction:column}.head h1{font-size:21px}.gamebox{margin:0 -1px}.hud{top:7px;left:7px;right:7px}.stat{padding:5px 7px;min-width:0;font-size:9px}.stat b{font-size:12px}.dialog{padding:17px 13px}.dialog h2{font-size:22px}.below{grid-template-columns:1fr}.panel{padding:12px}.pill{display:none}}
+</style></head><body>
+<header class="top"><a class="brand" href="/">DAEMON<span>SCRIPT</span> GAMING</a><a href="/games/">← 전체 게임</a></header>
+<main><div class="crumb">ARCADE / RHYTHM PLATFORMER</div><section class="head"><div><h1>GEOMETRY DASH</h1><p>점프 타이밍을 맞추고 장애물을 통과하세요.</p></div><span class="pill">FREE · INSTANT PLAY</span></section>
+<section class="gamebox"><canvas id="game" width="960" height="540" aria-label="Geometry Dash 게임 화면"></canvas><div class="hud"><div class="stat">PROGRESS <b id="progress">0%</b></div><div class="stat">BEST <b id="best">0%</b></div><div class="stat">LEVEL <b id="levelName">STEREO</b></div></div><div class="progress"><i id="bar"></i></div>
+<div class="overlay" id="start"><div class="dialog"><div class="tag">DAEMONSCRIPT ORIGINAL</div><h2>READY TO DASH?</h2><p>장애물을 뛰어넘고 결승선까지 달려보세요.<br>스페이스 / ↑ / 클릭 / 터치로 점프합니다.</p><div class="actions"><button class="primary" id="play">PLAY GAME</button></div></div></div>
+<div class="overlay hidden" id="result"><div class="dialog"><div class="tag" id="resultTag">RUN COMPLETE</div><h2 id="resultTitle">LEVEL FAILED</h2><p id="resultText">다시 도전해 보세요.</p><div class="actions"><button class="primary" id="retry">RETRY</button><button class="secondary" id="next">NEXT LEVEL</button></div></div></div>
+<div class="overlay hidden" id="pause"><div class="dialog"><div class="tag">PAUSED</div><h2>일시 정지</h2><p>준비되면 계속 진행하세요.</p><div class="actions"><button class="primary" id="resume">RESUME</button><button class="secondary" id="pauseRetry">RESTART</button></div></div></div>
+</section>
+<section class="below"><div class="panel"><h3>SELECT LEVEL</h3><div class="levels" id="levels"><button class="level active" data-level="0">01 · STEREO</button><button class="level" data-level="1">02 · NEON</button><button class="level" data-level="2">03 · CIRCUIT</button></div><div class="controls"><button id="pauseBtn">Ⅱ PAUSE</button><button id="restartBtn">↻ RESTART</button></div></div><div class="panel"><h3>HOW TO PLAY</h3><p>키보드: Space 또는 ↑ 키로 점프합니다.<br>모바일: 게임 화면을 터치해 점프합니다.<br>장애물에 닿으면 현재 레벨을 다시 시작합니다. 최고 진행률은 이 브라우저에 저장됩니다.</p></div></section><p class="foot">Original browser platform game · Progress and best scores are stored on this device.</p></main>
 <script>
-(function(){
-var cv=document.getElementById('c'),ctx=cv.getContext('2d'),W=900,H=562;
-var scEl=document.getElementById('sc'),bsEl=document.getElementById('bs'),stEl=document.getElementById('st'),goEl=document.getElementById('go'),gosEl=document.getElementById('gos');
-var best=+localStorage.getItem('arcadiaGDBus')||0;bsEl.textContent=best+'%';
-var G=H-80; // ground
-var player,obs,speed,score,running,dead,scrollX,jumpHeld;
-// build a level pattern that repeats
-function makeLevel(){
-  var arr=[];var x=600;
-  for(var i=0;i<40;i++){
-    var r=Math.random();
-    if(r<0.4){arr.push({x:x,t:'spike'});x+=48;}
-    else if(r<0.65){arr.push({x:x,t:'spike'});arr.push({x:x+44,t:'spike'});x+=48+90;}
-    else if(r<0.85){arr.push({x:x,t:'block',w:60,h:60});x+=120;}
-    else{x+=140;}
-  }
-  return arr;
-}
-function reset(){
-  player={x:180,y:G-30,vy:0,r:22,onG:true,rot:0};speed=5.5;score=0;scrollX=0;dead=false;running=true;obs=makeLevel();jumpHeld=false;
-  stEl.classList.add('hide');goEl.classList.add('hide');
-}
-function jump(){if(player.onG){player.vy=-12.5;player.onG=false;}}
-function upd(){
-  if(!running)return;
-  scrollX+=speed;score=Math.min(100,Math.floor(scrollX/30));
-  // gravity
-  player.vy+=0.62;player.y+=player.vy;
-  if(player.y>=G-player.r){player.y=G-player.r;player.vy=0;player.onG=true;player.rot=0;}else{player.rot+=0.16;}
-  // check obstacle collisions
-  for(var i=0;i<obs.length;i++){var o=obs[i];var ox=o.x-scrollX;
-    if(ox> -60 && ox < W+60){
-      if(o.t==='spike'){
-        // triangle spike at ground
-        var sx=ox,sy=G,sw=40,sh=40;
-        // AABB-ish with shrink
-        if(player.x+player.r*0.7>sx && player.x-player.r*0.7<sx+sw && player.y+player.r*0.7>sy-sh){die();return;}
-      } else if(o.t==='block'){
-        var bx=ox,by=G-o.h;
-        if(player.x+player.r>bx && player.x-player.r<bx+o.w && player.y+player.r>by && player.y-player.r<by+o.h){
-          // landed on top?
-          if(player.vy>0 && player.y+player.r-player.vy<=by+6){player.y=by-player.r;player.vy=0;player.onG=true;}
-          else{die();return;}
-        }
-      }
-    }
-  }
-  // hold to keep jumping if on ground
-  if(jumpHeld&&player.onG)jump();
-  scEl.textContent=score+'%';
-}
-function die(){dead=true;running=false;if(score>best){best=score;localStorage.setItem('arcadiaGDBus',best);}bsEl.textContent=best+'%';gosEl.textContent='Best: '+best+'%';goEl.classList.remove('hide');}
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  // bg gradient
-  var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0f0f1c');g.addColorStop(1,'#0A0A12');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  // bg grid
-  ctx.strokeStyle='rgba(124,58,237,.12)';ctx.lineWidth=1;var off=(scrollX*0.3)%60;
-  for(var x=-off;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(var y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  // ground
-  ctx.fillStyle='#14142a';ctx.fillRect(0,G,W,H-G);
-  ctx.strokeStyle='#7C3AED';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,G);ctx.lineTo(W,G);ctx.stroke();
-  // scroll markers on ground
-  ctx.fillStyle='rgba(34,211,238,.4)';var mo=(scrollX)%120;
-  for(var x=-mo;x<W;x+=120){ctx.fillRect(x,G-3,3,3);}
-  // obstacles
-  obs.forEach(function(o){var ox=o.x-scrollX;if(ox<-80||ox>W+80)return;
-    if(o.t==='spike'){ctx.fillStyle='#f43f5e';ctx.shadowColor='#f43f5e';ctx.shadowBlur=10;ctx.beginPath();ctx.moveTo(ox,G);ctx.lineTo(ox+20,G-40);ctx.lineTo(ox+40,G);ctx.closePath();ctx.fill();ctx.shadowBlur=0;}
-    else if(o.t==='block'){ctx.fillStyle='#22D3EE';ctx.shadowColor='#22D3EE';ctx.shadowBlur=8;ctx.fillRect(ox,G-o.h,o.w,o.h);ctx.shadowBlur=0;ctx.strokeStyle='rgba(255,255,255,.2)';ctx.strokeRect(ox,G-o.h,o.w,o.h);}
-  });
-  // player
-  ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.rot);
-  ctx.fillStyle='#22D3EE';ctx.shadowColor='#22D3EE';ctx.shadowBlur=16;ctx.fillRect(-player.r,-player.r,player.r*2,player.r*2);
-  ctx.shadowBlur=0;ctx.fillStyle='#0A0A12';ctx.fillRect(-player.r*0.4,-player.r*0.4,player.r*0.8,player.r*0.8);
-  ctx.restore();
-}
-function loop(){if(running)upd();draw();requestAnimationFrame(loop);}
-function act(e){e.preventDefault();jumpHeld=true;if(!running&&!dead){reset();return;}if(running)jump();}
-function rel(e){e.preventDefault();jumpHeld=false;}
-window.addEventListener('keydown',function(e){if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();jumpHeld=true;if(running)jump();else if(!dead)reset();}});
-window.addEventListener('keyup',function(e){if(e.key===' '||e.key==='ArrowUp')jumpHeld=false;});
-cv.addEventListener('mousedown',act);cv.addEventListener('mouseup',rel);
-cv.addEventListener('touchstart',act,{passive:false});cv.addEventListener('touchend',rel,{passive:false});
-document.getElementById('start').onclick=reset;
-document.getElementById('again').onclick=reset;
-loop();
+(()=>{'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),W=960,H=540,ground=430;
+const $=id=>document.getElementById(id);
+const levels=[
+{name:'STEREO',speed:6.1,length:6900,accent:'#35d9e8',obstacles:[[560,'spike'],[820,'spike'],[1080,'double'],[1500,'block'],[1810,'spike'],[2070,'double'],[2490,'block'],[2800,'triple'],[3290,'spike'],[3570,'block'],[3900,'double'],[4380,'triple'],[4900,'block'],[5230,'double'],[5700,'triple'],[6250,'spike']]},
+{name:'NEON',speed:6.7,length:7600,accent:'#b58cff',obstacles:[[540,'double'],[900,'block'],[1190,'spike'],[1450,'triple'],[1940,'block'],[2240,'double'],[2640,'triple'],[3160,'spike'],[3460,'block'],[3790,'triple'],[4310,'double'],[4720,'block'],[5050,'triple'],[5650,'double'],[6120,'triple'],[6750,'block']]},
+{name:'CIRCUIT',speed:7.2,length:8300,accent:'#ffbd69',obstacles:[[520,'spike'],[760,'double'],[1110,'block'],[1410,'triple'],[1900,'double'],[2300,'block'],[2630,'triple'],[3120,'double'],[3560,'block'],[3890,'triple'],[4450,'double'],[4880,'block'],[5210,'triple'],[5800,'double'],[6250,'triple'],[6900,'block'],[7350,'double']]}
+];
+let levelIndex=0,player,world=0,runState='ready',last=0,frame=0,particles=[],best=levels.map((_,i)=>Number(localStorage.getItem('dms-gd-best-'+i)||0));
+function level(){return levels[levelIndex]}
+function setBest(){ $('best').textContent=best[levelIndex]+'%'}
+function makePlayer(){return {x:190,y:ground-32,size:34,vy:0,rot:0,grounded:true}}
+function buildObstacles(){const out=[];level().obstacles.forEach(([x,type])=>{const count=type==='double'?2:type==='triple'?3:1;if(type==='block')out.push({x,y:ground-54,w:52,h:54,type:'block'});else for(let i=0;i<count;i++)out.push({x:x+i*42,y:ground-38,w:38,h:38,type:'spike'})});return out}
+let obstacles=[];
+function reset(){world=0;player=makePlayer();obstacles=buildObstacles();particles=[];runState='running';$('start').classList.add('hidden');$('result').classList.add('hidden');$('pause').classList.add('hidden');$('progress').textContent='0%';$('bar').style.width='0%';}
+function jump(){if(runState!=='running'){if(runState==='ready')reset();return}if(player.grounded){player.vy=-13.2;player.grounded=false}}
+function end(won){runState=won?'won':'dead';const pct=won?100:Math.min(99,Math.floor(world/level().length*100));if(pct>best[levelIndex]){best[levelIndex]=pct;localStorage.setItem('dms-gd-best-'+levelIndex,String(pct));setBest()}$('resultTag').textContent=won?'LEVEL COMPLETE':'TRY AGAIN';$('resultTitle').textContent=won?'LEVEL COMPLETE!':'CRASHED';$('resultText').textContent=won?'멋집니다! '+level().name+' 레벨을 완료했습니다.':'진행률 '+pct+'%에서 충돌했습니다. 다시 도전해 보세요.';$('next').style.display=won&&levelIndex<levels.length-1?'inline-block':'none';$('result').classList.remove('hidden')}
+function collision(o){const px=player.x,py=player.y,s=player.size*.78;if(o.type==='block'){return px+s/2>o.x&&px-s/2<o.x+o.w&&py+s/2>o.y+5&&py-s/2<o.y+o.h}const left=o.x+7,right=o.x+o.w-7,top=o.y+12;return px+s*.42>left&&px-s*.42<right&&py+s*.38>top&&py-s*.38<ground}
+function update(dt){if(runState!=='running')return;const step=Math.min(dt,2);world+=level().speed*step;player.vy+=.68*step;player.y+=player.vy*step;if(player.y>=ground-player.size/2){player.y=ground-player.size/2;player.vy=0;player.grounded=true;player.rot=Math.round(player.rot/(Math.PI/2))*(Math.PI/2)}else{player.grounded=false;player.rot+=.12*step}for(const o of obstacles){const x=o.x-world+player.x;if(x>player.x-60&&x<player.x+90){const shifted={...o,x:o.x-world+player.x};if(collision(shifted)){end(false);return}}}const pct=Math.min(100,Math.floor(world/level().length*100));$('progress').textContent=pct+'%';$('bar').style.width=pct+'%';if(pct>=100)end(true)}
+function draw(){frame++;const accent=level().accent;const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#14182d');grad.addColorStop(1,'#090b16');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);ctx.save();ctx.strokeStyle=accent+'20';ctx.lineWidth=1;const off=(world*.25)%60;for(let x=-off;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}ctx.restore();ctx.fillStyle='#151a30';ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=accent;ctx.fillRect(0,ground,W,3);for(let x=-((world*.8)%80);x<W;x+=80){ctx.fillStyle=accent+'70';ctx.fillRect(x,ground+18,28,3)}
+for(const o of obstacles){const x=o.x-world+player.x;if(x<-70||x>W+70)continue;if(o.type==='block'){ctx.shadowColor=accent;ctx.shadowBlur=16;ctx.fillStyle='#1a3850';ctx.fillRect(x,ground-o.h,o.w,o.h);ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.strokeRect(x,ground-o.h,o.w,o.h);ctx.shadowBlur=0}else{ctx.shadowColor='#ff527a';ctx.shadowBlur=14;ctx.fillStyle='#ff527a';ctx.beginPath();ctx.moveTo(x,ground);ctx.lineTo(x+o.w/2,ground-o.h);ctx.lineTo(x+o.w,ground);ctx.closePath();ctx.fill();ctx.shadowBlur=0}}
+ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.rot);ctx.shadowColor=accent;ctx.shadowBlur=20;ctx.fillStyle=accent;ctx.fillRect(-player.size/2,-player.size/2,player.size,player.size);ctx.shadowBlur=0;ctx.fillStyle='#101426';ctx.fillRect(-8,-8,16,16);ctx.strokeStyle='#ffffffaa';ctx.lineWidth=2;ctx.strokeRect(-player.size/2+2,-player.size/2+2,player.size-4,player.size-4);ctx.restore();if(runState==='ready'){ctx.fillStyle='#ffffff18';ctx.font='bold 70px Arial';ctx.textAlign='center';ctx.fillText('DASH',W/2,300)}}
+function loop(t){const dt=last?Math.min((t-last)/16.67,2):1;last=t;update(dt);draw();requestAnimationFrame(loop)}
+function choose(i){if(i<0||i>=levels.length)return;levelIndex=i;document.querySelectorAll('.level').forEach((b)=>b.classList.toggle('active',Number(b.dataset.level)===i));$('levelName').textContent=level().name;setBest();$('start').classList.remove('hidden');$('result').classList.add('hidden');$('pause').classList.add('hidden');runState='ready';world=0;player=makePlayer();obstacles=buildObstacles();$('progress').textContent='0%';$('bar').style.width='0%'}
+function pause(){if(runState==='running'){runState='paused';$('pause').classList.remove('hidden')}}
+function resume(){if(runState==='paused'){runState='running';$('pause').classList.add('hidden')}}
+$('play').onclick=reset;$('retry').onclick=reset;$('restartBtn').onclick=reset;$('pauseRetry').onclick=reset;$('pauseBtn').onclick=pause;$('resume').onclick=resume;$('next').onclick=()=>choose(levelIndex+1);document.querySelectorAll('.level').forEach(b=>b.addEventListener('click',()=>choose(Number(b.dataset.level))));
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();jump()});window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(runState==='paused')resume();else jump()}if(e.code==='Escape')pause()});choose(0);requestAnimationFrame(loop);
 })();
-</script>
-</body>
-</html>
+</script></body></html>
