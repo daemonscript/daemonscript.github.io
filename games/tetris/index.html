@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Tetris — Arcadia</title>
+<title>Tetris — DaeMonScript Games</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; background: #0A0A12; color: #e7e7f5;
@@ -41,9 +41,21 @@
   #controls .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
   @media (pointer: coarse), (max-width: 640px) { #controls { display: block; } }
   .hint { font-size: 10px; color: #5a5a78; margin-top: 6px; text-align: center; }
+
+/* DaeMonScript unified game shell */
+.dms-globalbar{position:fixed;z-index:1000;top:0;left:0;right:0;height:54px;display:flex;align-items:center;gap:22px;padding:0 clamp(14px,3vw,36px);background:rgba(8,12,22,.97);border-bottom:1px solid #29334a;color:#eef2ff;font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.dms-brand{display:flex;align-items:center;gap:9px;color:#f5f7ff;text-decoration:none;font-weight:900;letter-spacing:.12em;white-space:nowrap}
+.dms-mark{display:grid;place-items:center;width:25px;height:25px;background:#8b78ff;color:#090b13;font-size:12px;font-weight:1000}
+.dms-crumb{color:#7f8ba5;white-space:nowrap}.dms-crumb strong{color:#e9ecf8;font-weight:700}
+.dms-globalbar .dms-back{margin-left:auto;color:#c5baff;text-decoration:none;border:1px solid #343c55;padding:9px 12px;white-space:nowrap}
+.dms-globalbar .dms-back:hover{background:#8b78ff;color:#080b14;border-color:#8b78ff}
+body{padding-top:74px!important}
+@media(max-width:520px){.dms-globalbar{height:50px;gap:10px;padding:0 12px}.dms-brand{font-size:10px}.dms-crumb{font-size:10px}.dms-globalbar .dms-back{padding:8px;font-size:10px}body{padding-top:64px!important}}
+
 </style>
 </head>
 <body>
+<nav class="dms-globalbar" aria-label="DaeMonScript game navigation"><a class="dms-brand" href="/"><span class="dms-mark">D</span> DAEMONSCRIPT</a><span class="dms-crumb">GAMES&nbsp; / &nbsp;<strong>Tetris</strong></span><a class="dms-back" href="/games/">ALL GAMES&nbsp; ↗</a></nav>
 <div id="wrap">
   <header>
     <h1>Tetris</h1>
