@@ -39,6 +39,6 @@ function choose(i){if(i<0||i>=levels.length)return;levelIndex=i;document.querySe
 function pause(){if(runState==='running'){runState='paused';$('pause').classList.remove('hidden')}}
 function resume(){if(runState==='paused'){runState='running';$('pause').classList.add('hidden')}}
 $('play').onclick=reset;$('retry').onclick=reset;$('restartBtn').onclick=reset;$('pauseRetry').onclick=reset;$('pauseBtn').onclick=pause;$('resume').onclick=resume;$('next').onclick=()=>choose(levelIndex+1);document.querySelectorAll('.level').forEach(b=>b.addEventListener('click',()=>choose(Number(b.dataset.level))));
-canvas.addEventListener('pointerdown',e=>{e.preventDefault();jump()});window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(runState==='paused')resume();else jump()}if(e.code==='Escape')pause()});$('best').textContent=best[0]+'%';requestAnimationFrame(loop);
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();jump()});window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(runState==='paused')resume();else jump()}if(e.code==='Escape')pause()});choose(0);requestAnimationFrame(loop);
 })();
 </script></body></html>
