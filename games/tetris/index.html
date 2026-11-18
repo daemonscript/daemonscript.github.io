@@ -52,6 +52,9 @@
 body{padding-top:74px!important}
 @media(max-width:520px){.dms-globalbar{height:50px;gap:10px;padding:0 12px}.dms-brand{font-size:10px}.dms-crumb{font-size:10px}.dms-globalbar .dms-back{padding:8px;font-size:10px}body{padding-top:64px!important}}
 
+
+/* Keep game pages scrollable so the store-style details panel remains accessible. */
+body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
 </style>
 </head>
 <body>
@@ -454,6 +457,28 @@ body{padding-top:74px!important}
   started = false;
   draw();
 })();
+</script>
+
+<section class="dms-detail" id="dms-game-details" aria-labelledby="dms-detail-title">
+ <div class="dms-detail-head"><div class="dms-art" aria-hidden="true">T</div><div class="dms-detail-title"><span class="dms-eyebrow">GAME OVERVIEW</span><h2 id="dms-detail-title">Tetris</h2><p>Puzzle · Block</p></div><div class="dms-publisher"><span>PUBLISHED BY</span><strong>DaeMonScript Gaming</strong><small>Browser game · Free to play</small></div></div>
+ <p class="dms-description">떨어지는 블록을 회전하고 배치해 가로줄을 완성하세요. 줄을 지울수록 속도가 빨라집니다.</p>
+ <div class="dms-detail-grid"><div class="dms-info"><span class="dms-eyebrow">HOW TO PLAY</span><p>방향키 · 스페이스 하드 드롭 · P 일시정지 · 모바일 버튼</p></div><div class="dms-info"><span class="dms-eyebrow">FEATURES</span><ul><li>다음 블록 미리보기</li><li>점수·줄·레벨 표시</li><li>일시정지 및 모바일 조작</li></ul></div></div>
+ <div class="dms-rating"><div><strong>내 평가</strong><span id="dms-rating-label">이 브라우저에만 저장됩니다.</span></div><div class="dms-stars" role="group" aria-label="별점 선택"><button type="button" data-rate="1" aria-label="1점">★</button><button type="button" data-rate="2" aria-label="2점">★</button><button type="button" data-rate="3" aria-label="3점">★</button><button type="button" data-rate="4" aria-label="4점">★</button><button type="button" data-rate="5" aria-label="5점">★</button></div></div>
+</section>
+<style>
+.dms-detail{width:min(760px,calc(100% - 32px));margin:22px auto 48px;padding:22px;background:#111a29;border:1px solid #2a3850;color:#e8edf8;font:14px/1.6 Inter,system-ui,sans-serif;text-align:left}
+.dms-detail-head{display:flex;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid #29364c}
+.dms-art{width:74px;height:74px;flex:0 0 74px;display:grid;place-items:center;background:linear-gradient(145deg,#35466a,#171f32);border:1px solid #53658b;color:#c8c0ff;font-size:25px;font-weight:900}
+.dms-eyebrow{font-size:9px;letter-spacing:.16em;color:#8d9bb4;font-weight:800}
+.dms-detail-title h2{font-size:23px;line-height:1.2;margin:3px 0;color:#fff}.dms-detail-title p{margin:0;color:#a8b5cb;font-size:11px}
+.dms-publisher{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:3px}.dms-publisher span,.dms-publisher small{font-size:9px;color:#8593aa}.dms-publisher strong{font-size:11px;color:#d8def0}
+.dms-description{color:#c0cadb;margin:17px 0;max-width:680px;font-size:13px}
+.dms-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dms-info{padding:13px;background:#172235;border:1px solid #2a3850}.dms-info p{margin:7px 0 0;color:#d5dcec;font-size:11px}.dms-info ul{margin:7px 0 0;padding-left:17px;color:#d5dcec;font-size:11px}
+.dms-rating{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding-top:14px;border-top:1px solid #29364c}.dms-rating>div:first-child{display:flex;flex-direction:column}.dms-rating strong{font-size:12px}.dms-rating span{font-size:9px;color:#8997ae}.dms-stars{display:flex;gap:3px}.dms-stars button{border:0;background:transparent;color:#4a5871;font-size:23px;cursor:pointer;padding:2px}.dms-stars button.active{color:#f4c15d}.dms-stars button:focus-visible{outline:2px solid #8b78ff;outline-offset:2px}
+@media(max-width:560px){.dms-detail{padding:15px}.dms-art{width:54px;height:54px;flex-basis:54px}.dms-detail-title h2{font-size:19px}.dms-publisher{display:none}.dms-detail-grid{grid-template-columns:1fr}.dms-rating{align-items:flex-start;flex-direction:column}}
+</style>
+<script>
+(()=>{const key='dms-rating-tetris';const buttons=[...document.querySelectorAll('#dms-game-details [data-rate]')];const label=document.getElementById('dms-rating-label');let value=Number(localStorage.getItem(key)||0);function paint(){buttons.forEach(b=>{const active=Number(b.dataset.rate)<=value;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(Number(b.dataset.rate)===value))});label.textContent=value?'내 평가: '+value+'/5 · 이 브라우저에 저장됨':'별점을 선택해 주세요. 이 브라우저에만 저장됩니다.'}buttons.forEach(b=>b.addEventListener('click',()=>{value=Number(b.dataset.rate);localStorage.setItem(key,String(value));paint()}));paint()})();
 </script>
 </body>
 </html>
