@@ -19,6 +19,28 @@
 @media(max-width:900px){.header-inner{gap:24px}.nav{gap:18px}.search{width:190px}.hero{grid-template-columns:minmax(0,1fr) 260px}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.genre-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:650px){.header{height:64px}.header-inner{padding:0 14px;gap:12px}.brand-icon{width:34px;height:34px}.brand-name{font-size:15px}.brand-sub{font-size:8px}.nav{display:none}.search{width:min(37vw,180px)}.search input{height:34px;font-size:11px}.search button{height:34px}.library-link{display:none}.wrap{padding:16px 13px 86px}.subnav{gap:17px;overflow:auto;white-space:nowrap;margin-bottom:17px;padding:0 11px}.subnav a{font-size:10px}.hero{grid-template-columns:1fr;margin-bottom:31px}.hero-main{min-height:280px}.hero-copy{left:20px;right:18px;bottom:25px}.hero-copy h1{font-size:38px}.hero-copy p{font-size:12px;margin-bottom:16px}.hero-side{padding:15px}.hero-side p{margin-bottom:12px}.hero-art-grid{grid-template-columns:repeat(4,1fr)}.hero-art{height:48px}.hero-stat{margin-top:12px;padding-top:10px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:112px;padding:10px}.cover strong{font-size:17px}.game-info{padding:9px}.game-info h3{font-size:12px}.game-info p{font-size:9px}.save{font-size:9px;padding:5px 6px}.genre-grid{grid-template-columns:repeat(2,1fr);gap:7px}.genre{min-height:70px;padding:10px;font-size:11px}.section{margin-bottom:30px}.section-title{font-size:14px}.footer{flex-direction:column}.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;justify-content:space-around;background:#0d151df2;border-top:1px solid #2b4054;padding:11px 5px calc(11px + env(safe-area-inset-bottom));backdrop-filter:blur(14px)}.mobile-nav a{font-size:10px;color:#9bb2c1}.mobile-nav a.active{color:var(--blue)}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+/* Main store typography/layout safeguard */
+html,body{writing-mode:horizontal-tb!important;text-orientation:mixed!important}
+body *{writing-mode:horizontal-tb!important;text-orientation:mixed}
+.header-inner,.brand,.nav,.header-tools,.subnav,.section-head,.game-bottom,.footer{min-width:0}
+.brand,.brand-name,.brand-sub,.nav a,.header-tools a,.subnav a,.section-title,.view-all,.game-info h3,.game-info p,.game-bottom,.genre,.footer{white-space:normal;word-break:keep-all;overflow-wrap:normal}
+.nav{flex-shrink:0;gap:clamp(12px,2vw,30px)}
+.nav a{flex:0 0 auto;white-space:nowrap}
+.brand{flex:0 0 auto}
+.header-tools{flex:0 0 auto}
+.search{flex:0 1 245px;min-width:120px}
+.header-tools .library-link{flex:0 0 auto;white-space:nowrap}
+.hero-copy,.hero-copy h1,.hero-copy p,.hero-side,.section,.card,.game-info{min-width:0}
+.hero-copy h1{word-break:keep-all;overflow-wrap:normal}
+.game-info h3,.game-info p{word-break:keep-all}
+@media(max-width:1050px) and (min-width:651px){
+ .header-inner{gap:16px;padding-left:18px;padding-right:18px}
+ .nav{gap:12px}
+ .search{width:160px;min-width:110px}
+ .header-tools{gap:7px}
+ .header-tools .library-link{padding:9px 8px}
+}
 </style>
 </head>
 <body>
