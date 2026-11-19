@@ -5,9 +5,9 @@
 @media(max-width:800px){.shell{grid-template-columns:1fr}.side{display:none}.top{padding:0 17px}.content{padding:25px 16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.heading{font-size:23px}.stat{padding:15px}.stat strong{font-size:23px}}
 </style></head><body>
 <div id="login" class="login"><form class="loginbox" id="loginForm"><div class="eyebrow">DAEMONSCRIPT / CONTROL PLANE</div><h1>관리자 인증</h1><p>관리자 전용 콘솔입니다. Cloudflare Worker에 등록된 ADMIN_SECRET을 입력해 주세요. 일반 회원 비밀번호와는 별개입니다.</p><label for="key">ADMIN SECRET</label><input id="key" type="password" autocomplete="current-password" required placeholder="관리자 비밀키"><button type="submit">콘솔 접속</button><div id="loginError" class="error"></div></form></div>
-<div id="app" class="shell hidden"><aside class="side"><a class="brand" href="/">DAEMON<b>SCRIPT</b></a><div class="cap">MANAGEMENT</div><button class="nav active">▦　대시보드</button><button class="nav" id="usersNav">♙　회원 관리</button><div class="sidefoot">DaeMonScript Gaming<br>Administration Console<br>Secure session · Browser only</div></aside>
+<div id="app" class="shell hidden"><aside class="side"><a class="brand" href="/">DAEMON<b>SCRIPT</b></a><div class="cap">MANAGEMENT</div><button type="button" class="nav active" id="dashboardNav" data-view="dashboard">▦　대시보드</button><button type="button" class="nav" id="usersNav" data-view="users">♙　회원 관리</button><div class="sidefoot">DaeMonScript Gaming<br>Administration Console<br>Secure session · Browser only</div></aside>
 <main class="main"><header class="top"><div class="crumb">CONTROL PANEL　/　<strong id="crumb">Overview</strong></div><div class="topright"><span><i class="dot"></i>API 연결</span><button class="btn" id="logout">로그아웃</button></div></header>
-<div class="content"><div class="eyebrow">SYSTEM OVERVIEW</div><h1 class="heading" id="pageTitle">운영 대시보드</h1><p class="sub">DaeMonScript Gaming 계정 및 플랫폼 데이터 현황</p>
+<div class="content"><div class="eyebrow" id="pageEyebrow">SYSTEM OVERVIEW</div><h1 class="heading" id="pageTitle">운영 대시보드</h1><p class="sub" id="pageSub">DaeMonScript Gaming 계정 및 플랫폼 데이터 현황</p>
 <div id="apiNotice" class="notice hidden"></div>
 <div class="stats"><div class="stat"><small>전체 회원</small><strong id="sUsers">—</strong><em>REGISTERED ACCOUNTS</em></div><div class="stat"><small>활성 세션</small><strong id="sSessions">—</strong><em>VALID SESSIONS</em></div><div class="stat"><small>게임 기록</small><strong id="sRecords">—</strong><em>BEST SCORE RECORDS</em></div><div class="stat"><small>라이브러리 항목</small><strong id="sLibrary">—</strong><em>SAVED GAMES</em></div></div>
 <section class="section"><div class="sectionhead"><h2 id="tableTitle">최근 가입 회원</h2><button class="btn" id="refresh">새로고침</button></div><div class="tablewrap"><table><thead><tr><th>닉네임</th><th>이메일</th><th>가입일</th><th>활성 세션</th><th>라이브러리</th><th>관리</th></tr></thead><tbody id="userRows"><tr><td colspan="6" class="empty">데이터를 불러오는 중입니다.</td></tr></tbody></table></div></section>
@@ -22,6 +22,23 @@ async function load(){ $('apiNotice').classList.add('hidden');try{const [o,u]=aw
 function renderUsers(users){$('userRows').innerHTML='';if(!users.length){$('userRows').innerHTML='<tr><td colspan="6" class="empty">아직 가입한 회원이 없습니다.</td></tr>';return}for(const u of users){const tr=document.createElement('tr');const date=new Date(Number(u.createdAt)*1000).toLocaleDateString('ko-KR');for(const v of [u.nickname,u.email,date,String(u.activeSessions),String(u.libraryCount)]){const td=document.createElement('td');td.textContent=v;tr.appendChild(td)}const td=document.createElement('td');const b=document.createElement('button');b.className='btn danger';b.textContent='세션 해제';b.addEventListener('click',async()=>{if(!confirm(u.nickname+' 회원의 모든 로그인 세션을 해제할까요?'))return;try{await fetch(API+'/api/admin/users/'+encodeURIComponent(u.id)+'/revoke',{method:'POST',headers:headers()}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'실패')});await load()}catch(e){showError(e.message)}});td.appendChild(b);tr.appendChild(td);$('userRows').appendChild(tr)}}
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();adminKey=$('key').value;try{await api('/api/admin/overview');sessionStorage.setItem('dms-admin-key',adminKey);$('login').classList.add('hidden');$('app').classList.remove('hidden');$('loginError').textContent='';await load()}catch(err){$('loginError').textContent=err.message}});
 $('logout').addEventListener('click',()=>{sessionStorage.removeItem('dms-admin-key');adminKey='';$('app').classList.add('hidden');$('login').classList.remove('hidden');$('key').value=''});
-$('refresh').addEventListener('click',load);$('usersNav').addEventListener('click',()=>{$('crumb').textContent='Members';$('pageTitle').textContent='회원 관리';$('tableTitle').textContent='가입 회원 목록';load()});
+$('refresh').addEventListener('click',load);
+function setView(view){
+  const members=view==='users';
+  $('dashboardNav').classList.toggle('active',!members);
+  $('usersNav').classList.toggle('active',members);
+  $('crumb').textContent=members?'Members':'Overview';
+  $('pageEyebrow').textContent=members?'USER MANAGEMENT':'SYSTEM OVERVIEW';
+  $('pageTitle').textContent=members?'회원 관리':'운영 대시보드';
+  $('pageSub').textContent=members?'DaeMonScript Gaming 가입 회원 및 계정 세션 관리':'DaeMonScript Gaming 계정 및 플랫폼 데이터 현황';
+  $('tableTitle').textContent=members?'가입 회원 목록':'최근 가입 회원';
+  document.querySelector('.stats').classList.toggle('hidden',members);
+  $('refresh').textContent=members?'회원 목록 새로고침':'새로고침';
+  load();
+}
+$('dashboardNav').addEventListener('click',()=>setView('dashboard'));
+$('usersNav').addEventListener('click',()=>setView('users'));
+$('dashboardNav').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setView('dashboard')}});
+$('usersNav').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setView('users')}});
 if(adminKey){$('key').value='';api('/api/admin/overview').then(()=>{$('login').classList.add('hidden');$('app').classList.remove('hidden');load()}).catch(()=>{sessionStorage.removeItem('dms-admin-key');adminKey=''})}
 </script></body></html>
