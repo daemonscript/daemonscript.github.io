@@ -55,6 +55,7 @@ a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}button{c
 const feed=document.getElementById('feed'),tabs=[...document.querySelectorAll('[data-kind]')],sorts=[...document.querySelectorAll('[data-sort]')];
 let kind='all',sort='popular',custom=[];
 try{custom=JSON.parse(localStorage.getItem('dms-community-preview')||'[]');if(!Array.isArray(custom))custom=[]}catch{custom=[]}
+custom.forEach(item=>{const post=document.createElement('article');post.className='post';post.dataset.kind='news';post.dataset.game='내 게시물';post.dataset.pop='0';post.dataset.time=String(item.createdAt||0);const title=document.createElement('div');title.className='posthead';title.textContent='내 커뮤니티 글';const meta=document.createElement('div');meta.className='postmeta';meta.textContent='미리보기 게시물 · 저장된 글';const desc=document.createElement('div');desc.className='postdesc';desc.textContent=String(item.text||'');const foot=document.createElement('div');foot.className='postfoot';foot.textContent='현재 브라우저에 저장된 미리보기';post.append(title,meta,desc,foot);feed.append(post)});
 function render(){
  const q=document.getElementById('hubSearch').value.trim().toLowerCase();
  const cards=[...feed.querySelectorAll('.post')];
