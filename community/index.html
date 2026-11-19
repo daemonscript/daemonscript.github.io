@@ -73,4 +73,16 @@ document.getElementById('publish').addEventListener('click',()=>{const area=docu
 render();
 })();
 </script>
-</body></html>
+<style id="dms-account-menu-style">
+.dms-account-nav{position:relative;display:flex;align-items:center;margin-left:auto;height:100%;z-index:60;font-family:Arial,"Malgun Gothic",sans-serif}
+.dms-account-nav>button{border:0;background:#202b37;color:#dce7ef;padding:9px 12px;font-size:12px;white-space:nowrap}
+.dms-account-nav>button:hover,.dms-account-nav.open>button{background:#34495b;color:#fff}
+.dms-account-nav .dms-menu{display:none;position:absolute;right:0;top:calc(100% - 1px);width:190px;background:#3b4552;box-shadow:0 8px 24px #0009;padding:5px 0;border:1px solid #4a5664}
+.dms-account-nav:hover .dms-menu,.dms-account-nav:focus-within .dms-menu,.dms-account-nav.open .dms-menu{display:block}
+.dms-account-nav .dms-menu a{display:block;padding:9px 17px;color:#dce3eb;font-size:13px;white-space:nowrap}
+.dms-account-nav .dms-menu a:hover{background:#526273;color:#fff}
+@media(max-width:650px){.dms-account-nav{margin-left:auto}.dms-account-nav>button{font-size:10px;padding:8px}.dms-account-nav .dms-menu{position:fixed;top:64px;right:8px}}
+</style>
+<script id="dms-account-menu-script">
+(()=>{const root=document.querySelector('.header-inner,.topin');if(!root||root.querySelector('.dms-account-nav'))return;const nav=root.querySelector('.nav');if(!nav)return;const box=document.createElement('div');box.className='dms-account-nav';box.innerHTML='<button type="button" aria-haspopup="true" aria-expanded="false">계정 ▾</button><div class="dms-menu"><a href="/account/?tab=activity">활동</a><a href="/account/">프로필</a><a href="/account/?tab=friends">친구</a><a href="/account/games/">게임</a><a href="/account/?tab=groups">그룹</a><a href="/account/?tab=content">콘텐츠</a><a href="/account/?tab=badges">배지</a><a href="/account/?tab=storage">보관함</a><a href="/account/?tab=recap">DaeMonScript 돌아보기</a><a class="dms-login" href="/account/login.html">로그인 / 회원가입</a></div>';nav.insertAdjacentElement('afterend',box);const button=box.querySelector('button');button.addEventListener('click',()=>{box.classList.toggle('open');button.setAttribute('aria-expanded',box.classList.contains('open')?'true':'false')});document.addEventListener('click',e=>{if(!box.contains(e.target)){box.classList.remove('open');button.setAttribute('aria-expanded','false')}});const token=sessionStorage.getItem('dms-auth-token')||localStorage.getItem('dms-auth-token');if(token){fetch('https://daemonscript-gaming-auth.youthdeveloper-github.workers.dev/api/auth/me',{headers:{Authorization:'Bearer '+token}}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(d=>{button.textContent=(d.user.nickname||'계정')+' ▾';box.querySelector('.dms-login').textContent='로그아웃';box.querySelector('.dms-login').href='#logout';box.querySelector('.dms-login').addEventListener('click',async e=>{e.preventDefault();try{await fetch('https://daemonscript-gaming-auth.youthdeveloper-github.workers.dev/api/auth/logout',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:'{}'})}catch{}sessionStorage.removeItem('dms-auth-token');localStorage.removeItem('dms-auth-token');location.reload()})}).catch(()=>{})}const oldLogin=root.querySelector('a[href="/account/login.html"]');if(oldLogin&&oldLogin!==box)oldLogin.style.display='none';})();
+</script></body></html>
