@@ -87,6 +87,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
       <div class="panel"><h3>Lines</h3><div class="v" id="lines">0</div></div>
       <div class="panel"><h3>Level</h3><div class="v" id="level">1</div></div>
       <div class="panel"><h3>Next</h3><canvas id="next" width="96" height="96"></canvas></div>
+      <div class="panel"><h3>HOLD <small style="color:#8b9aaa;font-size:9px">C KEY</small></h3><canvas id="hold" width="96" height="96"></canvas></div>
       <button class="btn sec" id="pauseBtn" style="margin-top:4px;">Pause</button>
       <button class="btn sec" id="restartBtn2">Restart</button>
     </div>
@@ -99,7 +100,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
     </div>
     <div class="row">
       <button data-act="soft">Soft Drop</button>
-      <button data-act="hard">Hard Drop</button>
+      <button data-act="hard">Hard Drop</button><button data-act="hold">Hold</button>
       <button data-act="pause">Pause</button>
     </div>
   </div>
@@ -114,6 +115,8 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
   var ctx = cv.getContext('2d');
   var nextCv = document.getElementById('next');
   var nctx = nextCv.getContext('2d');
+  var holdCv = document.getElementById('hold');
+  var hctx = holdCv.getContext('2d');
   var CELL = cv.width / COLS;        // 20
   var NCELL = nextCv.width / 4;      // 24
 
@@ -165,7 +168,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
     return bag;
   }
 
-  var grid, current, nextType, bag, score, lines, level, dropMs, acc, last;
+  var grid, current, nextType, heldType, canHold, bag, score, lines, level, dropMs, acc, last;
   var running, paused, started, gameOver;
 
   function reset(){
@@ -178,25 +181,30 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
     bag = makeBag();
     nextType = bag.shift();
     if (bag.length < 2) bag = bag.concat(makeBag());
-    score = 0; lines = 0; level = 1; dropMs = 800; acc = 0; last = performance.now();
+    score = 0; lines = 0; level = 1; dropMs = 800; acc = 0; last = performance.now(); heldType = null; canHold = true;
     running = true; paused = false; gameOver = false;
     spawn();
     updateHud();
   }
 
+  function makePiece(type){
+    return {type:type,shape:SHAPES[type].map(function(p){return [p[0],p[1]];}),x:3,y:type==='I'?-1:0};
+  }
   function spawn(){
     var type = nextType;
     nextType = bag.shift();
     if (bag.length < 2) bag = bag.concat(makeBag());
-    current = {
-      type: type,
-      shape: SHAPES[type].map(function(p){ return [p[0], p[1]]; }),
-      x: type === 'O' ? 3 : 3,
-      y: type === 'I' ? -1 : 0
-    };
-    if (!canPlace(current.shape, current.x, current.y)){
-      endGame();
-    }
+    current = makePiece(type);
+    canHold = true;
+    if (!canPlace(current.shape, current.x, current.y)) endGame();
+  }
+  function holdCurrent(){
+    if(!current||gameOver||paused||!canHold)return;
+    var outgoing=current.type;
+    if(!heldType){heldType=outgoing;spawn();}
+    else{var incoming=heldType;heldType=outgoing;current=makePiece(incoming);if(!canPlace(current.shape,current.x,current.y))endGame();}
+    canHold=false;
+    draw();
   }
 
   function canPlace(shape, ox, oy){
@@ -346,7 +354,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
         if (cy >= 0) drawCell(ctx, cx, cy, COLORS[current.type], CELL);
       }
     }
-    // next preview
+    // next and held piece previews
     nctx.fillStyle = '#07070F';
     nctx.fillRect(0,0,nextCv.width,nextCv.height);
     if (nextType){
@@ -366,6 +374,8 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
         drawCell(nctx, sh[q][0]+offX, sh[q][1]+offY, COLORS[nextType], NCELL);
       }
     }
+    hctx.fillStyle='#07070F';hctx.fillRect(0,0,holdCv.width,holdCv.height);
+    if(heldType){var hs=SHAPES[heldType],hx0=4,hy0=4,hx1=-1,hy1=-1;hs.forEach(function(p){hx0=Math.min(hx0,p[0]);hy0=Math.min(hy0,p[1]);hx1=Math.max(hx1,p[0]);hy1=Math.max(hy1,p[1]);});var hw=hx1-hx0+1,hh=hy1-hy0+1,hox=(4-hw)/2-hx0,hoy=(4-hh)/2-hy0;hs.forEach(function(p){drawCell(hctx,p[0]+hox,p[1]+hoy,COLORS[heldType],NCELL);});}
   }
 
   function loop(now){
@@ -409,6 +419,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
     else if (k === 'ArrowUp') { rotateCurrent(); e.preventDefault(); }
     else if (k === ' ') { hardDrop(); e.preventDefault(); }
     else if (k === 'p' || k === 'P') { togglePause(); }
+    else if (k === 'c' || k === 'C') { holdCurrent(); }
     else if (k === 'Enter') { if (!started || gameOver) startGame(); }
   }, {passive:false});
 
@@ -421,6 +432,7 @@ body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
       else if (a === 'rotate') rotateCurrent();
       else if (a === 'soft') softDrop();
       else if (a === 'hard') hardDrop();
+      else if (a === 'hold') holdCurrent();
       else if (a === 'pause') togglePause();
     });
   });
