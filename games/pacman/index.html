@@ -61,7 +61,7 @@ var MAP=[
 var ORIGINAL_MAP=MAP.map(function(r){return r.slice();});
 var player,ghosts,score,running,dead,lives,powerT,dotsLeft,dir,nextDir;
 function reset(full){
-  if(full){score=0;lives=3;}
+  if(full){score=0;lives=3;scEl.textContent='0';lfEl.textContent='3';}
   player={x:9,y:15,px:9*CELL+CELL/2,py:15*CELL+CELL/2};dir={x:0,y:0};nextDir={x:0,y:0};
   ghosts=[{x:9,y:9,px:9*CELL+CELL/2,py:9*CELL+CELL/2,c:'#f43f5e',dir:1},{x:8,y:9,px:8*CELL+CELL/2,py:9*CELL+CELL/2,c:'#F59E0B',dir:3},{x:10,y:9,px:10*CELL+CELL/2,py:9*CELL+CELL/2,c:'#22D3EE',dir:2}];
   powerT=0;running=true;paused=false;dead=false;pauseEl.classList.add('hide');document.getElementById('pauseBtn').textContent='Pause';
