@@ -1,50 +1,94 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090b13"><title>Snake — DaeMonScript Games</title><style>
-:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#090b13;color:#f4f5fb;display:grid;place-items:center;padding:18px}.wrap{width:min(560px,100%)}a{color:#b9aaff;text-decoration:none;font-size:12px}.head{display:flex;justify-content:space-between;align-items:center;margin:18px 0}.head h1{font-size:25px;margin:0}.stats{display:flex;gap:10px}.stat{background:#151a29;border:1px solid #293149;padding:9px 13px;border-radius:10px;font-size:11px;color:#aab2c7}.stat b{color:white;font-size:15px;margin-left:6px}canvas{width:100%;aspect-ratio:1;background:#0d1420;border:1px solid #303b55;border-radius:15px;display:block;touch-action:none}.controls{display:flex;justify-content:space-between;gap:10px;margin-top:14px;align-items:center}.btn{background:#9a83ff;color:#0b0b15;border:0;border-radius:9px;padding:11px 16px;font-weight:800}.hint{font-size:11px;color:#9ba4bb;line-height:1.6}.pad{display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px);gap:4px}.pad button{background:#1a2031;border:1px solid #303b55;border-radius:7px;color:white}.pad button:nth-child(1){grid-column:2}.pad button:nth-child(2){grid-column:1;grid-row:2}.pad button:nth-child(3){grid-column:2;grid-row:2}.pad button:nth-child(4){grid-column:3;grid-row:2}.overlay{margin-top:10px;color:#9ba4bb;font-size:11px;text-align:center}@media(min-width:700px){.pad{display:none}}
-/* DaeMonScript unified game shell */
-.dms-globalbar{position:fixed;z-index:1000;top:0;left:0;right:0;height:54px;display:flex;align-items:center;gap:22px;padding:0 clamp(14px,3vw,36px);background:rgba(8,12,22,.97);border-bottom:1px solid #29334a;color:#eef2ff;font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}
-.dms-brand{display:flex;align-items:center;gap:9px;color:#f5f7ff;text-decoration:none;font-weight:900;letter-spacing:.12em;white-space:nowrap}
-.dms-mark{display:grid;place-items:center;width:25px;height:25px;background:#8b78ff;color:#090b13;font-size:12px;font-weight:1000}
-.dms-crumb{color:#7f8ba5;white-space:nowrap}.dms-crumb strong{color:#e9ecf8;font-weight:700}
-.dms-globalbar .dms-back{margin-left:auto;color:#c5baff;text-decoration:none;border:1px solid #343c55;padding:9px 12px;white-space:nowrap}
-.dms-globalbar .dms-back:hover{background:#8b78ff;color:#080b14;border-color:#8b78ff}
-body{padding-top:74px!important}
-@media(max-width:520px){.dms-globalbar{height:50px;gap:10px;padding:0 12px}.dms-brand{font-size:10px}.dms-crumb{font-size:10px}.dms-globalbar .dms-back{padding:8px;font-size:10px}body{padding-top:64px!important}}
-
-
-/* Keep game pages scrollable so the store-style details panel remains accessible. */
-body{overflow-y:auto!important;min-height:100vh!important;align-content:start}
-</style></head><body>
-<nav class="dms-globalbar" aria-label="DaeMonScript game navigation"><a class="dms-brand" href="/"><span class="dms-mark">D</span> DAEMONSCRIPT</a><span class="dms-crumb">GAMES&nbsp; / &nbsp;<strong>Snake</strong></span><a class="dms-back" href="/games/">ALL GAMES&nbsp; ↗</a></nav><main class="wrap"><a href="/games/">← ALL GAMES</a><div class="head"><h1>Snake</h1><div class="stats"><div class="stat">SCORE<b id="score">0</b></div><div class="stat">BEST<b id="best">0</b></div></div></div><canvas id="game" width="480" height="480" aria-label="Snake game board"></canvas><div class="controls"><div><button class="btn" id="start">START GAME</button><p class="hint">Move with arrow keys or WASD.<br>On mobile, use the direction pad.</p></div><div class="pad" aria-label="Touch controls"><button data-dir="up">▲</button><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div></div><p class="overlay" id="message">Press Start to play. Avoid the walls and your own tail.</p></main><script>
-(()=>{const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),message=document.getElementById('message'),start=document.getElementById('start'),N=24,C=20;let snake,dir,next,food,score,best=Number(localStorage.getItem('dms-snake-best')||0),timer=null,running=false;bestEl.textContent=best;
-function reset(){snake=[{x:8,y:12},{x:7,y:12},{x:6,y:12}];dir={x:1,y:0};next=dir;score=0;scoreEl.textContent='0';food=spawn();draw()}
-function spawn(){let p;do{p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(snake.some(s=>s.x===p.x&&s.y===p.y));return p}
-function draw(){ctx.fillStyle='#0d1420';ctx.fillRect(0,0,480,480);ctx.strokeStyle='#ffffff08';for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*C,0);ctx.lineTo(i*C,480);ctx.moveTo(0,i*C);ctx.lineTo(480,i*C);ctx.stroke()}ctx.fillStyle='#ff8b9c';ctx.beginPath();ctx.arc(food.x*C+10,food.y*C+10,7,0,Math.PI*2);ctx.fill();snake.forEach((s,i)=>{ctx.fillStyle=i?'#42b99b':'#8bf0cf';ctx.beginPath();ctx.roundRect(s.x*C+2,s.y*C+2,C-4,C-4,5);ctx.fill()})}
-function stop(msg){running=false;clearInterval(timer);timer=null;start.textContent='PLAY AGAIN';message.textContent=msg}
-function tick(){dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};const eating=head.x===food.x&&head.y===food.y;const body=eating?snake:snake.slice(0,-1);if(head.x<0||head.y<0||head.x>=N||head.y>=N||body.some(s=>s.x===head.x&&s.y===head.y)){stop('Game over. Your score: '+score+'. Press Play Again to retry.');return}snake.unshift(head);if(eating){score+=10;scoreEl.textContent=score;if(score>best){best=score;bestEl.textContent=best;localStorage.setItem('dms-snake-best',best)}food=spawn()}else snake.pop();draw()}
-function change(d){if(d.x!==-dir.x||d.y!==-dir.y)next=d}
-function begin(){clearInterval(timer);reset();running=true;start.textContent='RESTART';message.textContent='Game running — good luck!';timer=setInterval(tick,115)}
-document.addEventListener('keydown',e=>{const map={ArrowUp:{x:0,y:-1},w:{x:0,y:-1},ArrowDown:{x:0,y:1},s:{x:0,y:1},ArrowLeft:{x:-1,y:0},a:{x:-1,y:0},ArrowRight:{x:1,y:0},d:{x:1,y:0}};const d=map[e.key]||map[e.key.toLowerCase()];if(d){e.preventDefault();change(d)}});document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()=>{const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};change(map[b.dataset.dir])}));start.addEventListener('click',begin);reset();
-})();
-</script>
-<section class="dms-detail" id="dms-game-details" aria-labelledby="dms-detail-title">
- <div class="dms-detail-head"><div class="dms-art" aria-hidden="true">S</div><div class="dms-detail-title"><span class="dms-eyebrow">GAME OVERVIEW</span><h2 id="dms-detail-title">Snake</h2><p>Arcade · Classic</p></div><div class="dms-publisher"><span>PUBLISHED BY</span><strong>DaeMonScript Gaming</strong><small>Browser game · Free to play</small></div></div>
- <p class="dms-description">먹이를 모으며 뱀의 길이를 늘려 최고 기록에 도전하는 클래식 아케이드 게임입니다.</p>
- <div class="dms-detail-grid"><div class="dms-info"><span class="dms-eyebrow">HOW TO PLAY</span><p>방향키 또는 WASD · 모바일 방향 패드</p></div><div class="dms-info"><span class="dms-eyebrow">FEATURES</span><ul><li>점수 및 개인 최고 기록</li><li>키보드와 터치 조작</li><li>기록 브라우저 저장</li></ul></div></div>
- <div class="dms-rating"><div><strong>내 평가</strong><span id="dms-rating-label">이 브라우저에만 저장됩니다.</span></div><div class="dms-stars" role="group" aria-label="별점 선택"><button type="button" data-rate="1" aria-label="1점">★</button><button type="button" data-rate="2" aria-label="2점">★</button><button type="button" data-rate="3" aria-label="3점">★</button><button type="button" data-rate="4" aria-label="4점">★</button><button type="button" data-rate="5" aria-label="5점">★</button></div></div>
-</section>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d16"><meta name="description" content="DaeMonScript Snake — 클래식 스네이크를 세련된 아케이드 모드로 즐겨보세요.">
+<title>Snake — DaeMonScript Gaming</title>
 <style>
-.dms-detail{width:min(760px,calc(100% - 32px));margin:22px auto 48px;padding:22px;background:#111a29;border:1px solid #2a3850;color:#e8edf8;font:14px/1.6 Inter,system-ui,sans-serif;text-align:left}
-.dms-detail-head{display:flex;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid #29364c}
-.dms-art{width:74px;height:74px;flex:0 0 74px;display:grid;place-items:center;background:linear-gradient(145deg,#35466a,#171f32);border:1px solid #53658b;color:#c8c0ff;font-size:25px;font-weight:900}
-.dms-eyebrow{font-size:9px;letter-spacing:.16em;color:#8d9bb4;font-weight:800}
-.dms-detail-title h2{font-size:23px;line-height:1.2;margin:3px 0;color:#fff}.dms-detail-title p{margin:0;color:#a8b5cb;font-size:11px}
-.dms-publisher{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:3px}.dms-publisher span,.dms-publisher small{font-size:9px;color:#8593aa}.dms-publisher strong{font-size:11px;color:#d8def0}
-.dms-description{color:#c0cadb;margin:17px 0;max-width:680px;font-size:13px}
-.dms-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dms-info{padding:13px;background:#172235;border:1px solid #2a3850}.dms-info p{margin:7px 0 0;color:#d5dcec;font-size:11px}.dms-info ul{margin:7px 0 0;padding-left:17px;color:#d5dcec;font-size:11px}
-.dms-rating{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding-top:14px;border-top:1px solid #29364c}.dms-rating>div:first-child{display:flex;flex-direction:column}.dms-rating strong{font-size:12px}.dms-rating span{font-size:9px;color:#8997ae}.dms-stars{display:flex;gap:3px}.dms-stars button{border:0;background:transparent;color:#4a5871;font-size:23px;cursor:pointer;padding:2px}.dms-stars button.active{color:#f4c15d}.dms-stars button:focus-visible{outline:2px solid #8b78ff;outline-offset:2px}
-@media(max-width:560px){.dms-detail{padding:15px}.dms-art{width:54px;height:54px;flex-basis:54px}.dms-detail-title h2{font-size:19px}.dms-publisher{display:none}.dms-detail-grid{grid-template-columns:1fr}.dms-rating{align-items:flex-start;flex-direction:column}}
+:root{color-scheme:dark;--bg:#080d16;--panel:#101a28;--line:#26374a;--text:#edf5fa;--muted:#8da1b4;--mint:#72e6c0;--cyan:#69c8f0;--gold:#f7c66a;font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -260px,#1b4050 0,transparent 680px),var(--bg);color:var(--text)}
+a{color:inherit;text-decoration:none}button,select{font:inherit}
+.top{height:62px;border-bottom:1px solid #243343;background:#0b121deF;display:flex;align-items:center;justify-content:space-between;padding:0 max(18px,calc((100% - 1120px)/2));position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+.brand{font-size:14px;font-weight:900;letter-spacing:2px}.brand b{color:var(--mint)}.back{font-size:11px;color:#a8bfce;border:1px solid #34485b;padding:9px 12px}
+main{width:min(1120px,calc(100% - 32px));margin:30px auto 70px}
+.intro{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}.eyebrow{font-size:9px;letter-spacing:2.2px;color:var(--mint);font-weight:800}.intro h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1.4px;margin:7px 0 5px}.intro p{margin:0;color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;align-items:start}
+.play-area{background:linear-gradient(145deg,#111d2b,#0c1420);border:1px solid #293b4d;padding:16px;box-shadow:0 20px 60px #0005}
+.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat{padding:10px 12px;background:#0a121d;border:1px solid #23374a}.stat span{display:block;font-size:9px;color:var(--muted);letter-spacing:1.3px}.stat strong{display:block;margin-top:4px;font-size:20px;font-variant-numeric:tabular-nums}
+.board-wrap{position:relative;width:min(100%,600px);margin:auto;aspect-ratio:1;background:#09121c;border:1px solid #304658;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#06101bd9;backdrop-filter:blur(7px);padding:20px;text-align:center}
+.overlay.hidden{display:none}.dialog{width:min(340px,100%);padding:25px;background:#111f2d;border:1px solid #385367;box-shadow:0 18px 50px #0008}
+.dialog .symbol{font-size:32px;color:var(--mint)}.dialog h2{font-size:22px;letter-spacing:1px;margin:10px 0 7px}.dialog p{font-size:12px;line-height:1.65;color:#a7bac9;margin:0 0 18px}
+.actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid #476276;background:#1a3041;color:#e7f5fb;padding:10px 16px;font-size:11px;font-weight:800;letter-spacing:.6px;cursor:pointer}
+.btn.primary{background:linear-gradient(100deg,#5ac9a5,#85e8cb);border-color:#8af0d0;color:#062219}.btn:hover{filter:brightness(1.12)}button:focus-visible,select:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+.side{display:grid;gap:10px}.panel{background:#101a28;border:1px solid #26394b;padding:15px}.panel h3{font-size:10px;letter-spacing:1.7px;color:#a8bdcb;margin:0 0 12px}.field{display:grid;gap:6px;margin:0 0 12px}.field label{font-size:10px;color:var(--muted)}select{width:100%;padding:10px;background:#0a1420;border:1px solid #31485b;color:#eaf4f8;border-radius:0}
+.control-row{display:flex;gap:7px}.control-row .btn{flex:1}.help{font-size:11px;line-height:1.75;color:#a2b5c4;margin:0}.help b{color:#e4f3f7}.pad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,42px);gap:5px;justify-content:center;margin-top:14px}.pad button{background:#172a3a;border:1px solid #355064;color:#dff6f0;font-size:15px;cursor:pointer}.pad [data-dir=up]{grid-column:2}.pad [data-dir=left]{grid-column:1;grid-row:2}.pad [data-dir=down]{grid-column:2;grid-row:2}.pad [data-dir=right]{grid-column:3;grid-row:2}
+.tip{font-size:10px;line-height:1.6;color:#8299aa;margin:12px 0 0}
+.details{margin-top:16px;background:#101a28;border:1px solid #26394b;padding:18px}.details h2{font-size:14px;margin:0 0 7px}.details p{font-size:11px;line-height:1.7;color:#9eb2c1;margin:0}
+@media(max-width:780px){main{margin-top:20px}.layout{grid-template-columns:1fr}.side{grid-template-columns:repeat(2,minmax(0,1fr))}.side .panel:first-child{grid-column:1/-1}.intro{align-items:start;flex-direction:column}}
+@media(max-width:480px){.play-area{padding:9px}.hud{gap:5px}.stat{padding:8px}.stat strong{font-size:17px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.top{height:56px}}
 </style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/">DAEMON<b>SCRIPT</b> GAMING</a><a class="back" href="/games/">← ALL GAMES</a></header>
+<main>
+<section class="intro"><div><span class="eyebrow">ARCADE · CLASSIC SURVIVAL</span><h1>Snake</h1><p>먹이를 먹고 성장하세요. 속도는 점점 빨라지고, 기록은 계속 남습니다.</p></div></section>
+<div class="layout">
+<section class="play-area">
+<div class="hud"><div class="stat"><span>SCORE</span><strong id="score">0</strong></div><div class="stat"><span>BEST</span><strong id="best">0</strong></div><div class="stat"><span>LEVEL</span><strong id="level">1</strong></div></div>
+<div class="board-wrap"><canvas id="game" width="600" height="600" aria-label="Snake 게임 보드"></canvas>
+<div class="overlay" id="overlay"><div class="dialog"><div class="symbol" id="symbol">◆</div><h2 id="overlayTitle">READY?</h2><p id="overlayText">방향키 또는 WASD로 움직이세요. 먹이를 먹을수록 속도가 빨라집니다.</p><div class="actions"><button class="btn primary" id="mainAction">START GAME</button></div></div></div></div>
+</section>
+<aside class="side">
+<section class="panel"><h3>GAME SETTINGS</h3><div class="field"><label for="difficulty">난이도</label><select id="difficulty"><option value="normal">NORMAL · 표준</option><option value="relaxed">RELAXED · 여유롭게</option><option value="fast">FAST · 빠르게</option></select></div><div class="control-row"><button class="btn" id="pauseBtn" disabled>PAUSE</button><button class="btn" id="soundBtn">SOUND ON</button></div><p class="tip">난이도는 새 게임부터 적용됩니다. P 키로 일시정지할 수 있습니다.</p></section>
+<section class="panel"><h3>CONTROLS</h3><p class="help"><b>PC</b> 방향키 / WASD 이동<br><b>SPACE 또는 P</b> 일시정지<br><b>모바일</b> 아래 방향 패드 또는 스와이프</p><div class="pad" aria-label="터치 방향 패드"><button data-dir="up" aria-label="위">▲</button><button data-dir="left" aria-label="왼쪽">◀</button><button data-dir="down" aria-label="아래">▼</button><button data-dir="right" aria-label="오른쪽">▶</button></div></section>
+<section class="panel"><h3>YOUR RECORD</h3><p class="help">개인 최고 기록은 이 브라우저에 자동 저장됩니다. 5개 먹이를 먹을 때마다 레벨이 오릅니다.</p></section>
+</aside>
+</div>
+<section class="details"><h2>Snake · DaeMonScript Arcade</h2><p>클래식 스네이크를 새롭게 구성한 아케이드 게임입니다. 먹이를 획득하면 길이와 점수가 증가하며, 일정 점수마다 플레이 속도가 올라갑니다. 키보드와 터치 조작을 모두 지원합니다.</p></section>
+</main>
 <script>
-(()=>{const key='dms-rating-snake';const buttons=[...document.querySelectorAll('#dms-game-details [data-rate]')];const label=document.getElementById('dms-rating-label');let value=Number(localStorage.getItem(key)||0);function paint(){buttons.forEach(b=>{const active=Number(b.dataset.rate)<=value;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(Number(b.dataset.rate)===value))});label.textContent=value?'내 평가: '+value+'/5 · 이 브라우저에 저장됨':'별점을 선택해 주세요. 이 브라우저에만 저장됩니다.'}buttons.forEach(b=>b.addEventListener('click',()=>{value=Number(b.dataset.rate);localStorage.setItem(key,String(value));paint()}));paint()})();
+(()=>{'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
+const N=25,C=24,BASE={relaxed:155,normal:120,fast:92};
+let snake,dir,next,food,score,best=Number(localStorage.getItem('dms-snake-best')||0),timer=null,running=false,paused=false,muted=false,level=1;
+$('best').textContent=best;
+const audio=()=>{try{return new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}};
+let ac=null;
+function tone(f,d=.08){if(muted)return;try{ac=ac||audio();if(!ac)return;if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.045,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+function randCell(){return {x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}
+function spawn(){let p;do{p=randCell()}while(snake.some(s=>s.x===p.x&&s.y===p.y));return p}
+function reset(){snake=[{x:11,y:12},{x:10,y:12},{x:9,y:12},{x:8,y:12}];dir={x:1,y:0};next={x:1,y:0};score=0;level=1;food=spawn();$('score').textContent='0';$('level').textContent='1';draw()}
+function draw(){
+ ctx.clearRect(0,0,600,600);const bg=ctx.createLinearGradient(0,0,600,600);bg.addColorStop(0,'#0b1924');bg.addColorStop(1,'#07101a');ctx.fillStyle=bg;ctx.fillRect(0,0,600,600);
+ ctx.strokeStyle='rgba(130,190,205,.055)';ctx.lineWidth=1;for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*C,0);ctx.lineTo(i*C,600);ctx.moveTo(0,i*C);ctx.lineTo(600,i*C);ctx.stroke()}
+ const pulse=1+Math.sin(performance.now()/180)*.12;ctx.save();ctx.shadowColor='#ff8d9d';ctx.shadowBlur=20;ctx.fillStyle='#ff879b';ctx.beginPath();ctx.arc(food.x*C+C/2,food.y*C+C/2,8*pulse,0,Math.PI*2);ctx.fill();ctx.restore();
+ snake.forEach((s,i)=>{const x=s.x*C+2,y=s.y*C+2;const g=ctx.createLinearGradient(x,y,x+C,y+C);g.addColorStop(0,i?'#2c9e88':'#c0ffe9');g.addColorStop(1,i?'#176957':'#48d8ad');ctx.fillStyle=g;ctx.shadowColor=i?'#35d6ad':'#7effd1';ctx.shadowBlur=i?5:15;ctx.beginPath();ctx.roundRect(x,y,C-4,C-4,i===0?8:6);ctx.fill();ctx.shadowBlur=0;if(i===0){ctx.fillStyle='#06251f';const ex=s.x*C+C/2+dir.x*5,ey=s.y*C+C/2+dir.y*5;ctx.beginPath();ctx.arc(ex-dir.y*4,ey+dir.x*4,2,0,Math.PI*2);ctx.arc(ex+dir.y*4,ey-dir.x*4,2,0,Math.PI*2);ctx.fill()}});
+}
+function stop(){clearInterval(timer);timer=null;running=false;paused=false;$('pauseBtn').disabled=true;$('pauseBtn').textContent='PAUSE'}
+function show(title,desc,button,symbol='◆'){ $('overlayTitle').textContent=title;$('overlayText').textContent=desc;$('mainAction').textContent=button;$('symbol').textContent=symbol;$('overlay').classList.remove('hidden')}
+function hide(){ $('overlay').classList.add('hidden')}
+function end(){stop();tone(180,.24);show('GAME OVER','점수 '+score+' · 최고 기록 '+best+'점. 다시 도전해 보세요.','PLAY AGAIN','×')}
+function tick(){
+ dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y},eat=head.x===food.x&&head.y===food.y,body=eat?snake:snake.slice(0,-1);
+ if(head.x<0||head.y<0||head.x>=N||head.y>=N||body.some(s=>s.x===head.x&&s.y===head.y)){end();return}
+ snake.unshift(head);
+ if(eat){score+=10;$('score').textContent=score;food=spawn();tone(520,.06);const newLevel=1+Math.floor(score/50);if(newLevel!==level){level=newLevel;$('level').textContent=level;tone(760,.12);clearInterval(timer);timer=setInterval(tick,Math.max(55,BASE[$('difficulty').value]-(level-1)*7))}if(score>best){best=score;$('best').textContent=best;localStorage.setItem('dms-snake-best',String(best))}}
+ else snake.pop();draw();
+}
+function begin(){stop();reset();running=true;$('pauseBtn').disabled=false;hide();timer=setInterval(tick,BASE[$('difficulty').value])}
+function togglePause(){if(!running&&!paused)return;if(paused){paused=false;running=true;$('pauseBtn').textContent='PAUSE';hide();timer=setInterval(tick,Math.max(55,BASE[$('difficulty').value]-(level-1)*7))}else{paused=true;running=false;clearInterval(timer);timer=null;$('pauseBtn').textContent='RESUME';show('PAUSED','현재 진행 상황은 그대로 보존됩니다.','RESUME','Ⅱ')}}
+function change(d){if(!running)return;if(d.x!==-dir.x||d.y!==-dir.y)next=d}
+const map={ArrowUp:{x:0,y:-1},w:{x:0,y:-1},ArrowDown:{x:0,y:1},s:{x:0,y:1},ArrowLeft:{x:-1,y:0},a:{x:-1,y:0},ArrowRight:{x:1,y:0},d:{x:1,y:0}};
+window.addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(map[k]){e.preventDefault();change(map[k])}if(k==='p'||k===' '){e.preventDefault();togglePause()}});
+document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()=>change(({up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}})[b.dataset.dir])));
+let sx=0,sy=0;canvas.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;change(Math.abs(dx)>Math.abs(dy)?{x:dx>0?1:-1,y:0}:{x:0,y:dy>0?1:-1})});
+$('mainAction').addEventListener('click',()=>{if(paused)togglePause();else begin()});$('pauseBtn').addEventListener('click',togglePause);
+$('soundBtn').addEventListener('click',()=>{muted=!muted;$('soundBtn').textContent=muted?'SOUND OFF':'SOUND ON';if(!muted)tone(620,.07)});
+$('difficulty').addEventListener('change',()=>{if(!running)return;clearInterval(timer);timer=setInterval(tick,Math.max(55,BASE[$('difficulty').value]-(level-1)*7))});
+reset();show('READY?','방향키 또는 WASD로 움직이세요. 먹이를 먹을수록 속도가 빨라집니다.','START GAME');
+})();
 </script>
 </body></html>
