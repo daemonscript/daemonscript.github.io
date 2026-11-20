@@ -87,7 +87,7 @@ document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()
 let sx=0,sy=0;canvas.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;change(Math.abs(dx)>Math.abs(dy)?{x:dx>0?1:-1,y:0}:{x:0,y:dy>0?1:-1})});
 $('mainAction').addEventListener('click',()=>{if(paused)togglePause();else begin()});$('pauseBtn').addEventListener('click',togglePause);
 $('soundBtn').addEventListener('click',()=>{muted=!muted;$('soundBtn').textContent=muted?'SOUND OFF':'SOUND ON';if(!muted)tone(620,.07)});
-$('difficulty').addEventListener('change',()=>{if(!running&&!paused)return;clearInterval(timer);timer=setInterval(tick,Math.max(55,BASE[$('difficulty').value]-(level-1)*7))});
+$('difficulty').addEventListener('change',()=>{if(!running)return;clearInterval(timer);timer=setInterval(tick,Math.max(55,BASE[$('difficulty').value]-(level-1)*7))});
 reset();show('READY?','방향키 또는 WASD로 움직이세요. 먹이를 먹을수록 속도가 빨라집니다.','START GAME');
 })();
 </script>
