@@ -112,7 +112,7 @@ function upd(){
       // choose direction toward player (or away if power)
       var dirs=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
       var best=null,bd=-999;
-      dirs.forEach(function(d){if(d.x===-g.lastdx&&d.y===-g.lastdy)return;if(canMove(gcx,gcy,d.x,d.y)){var tx=gcx+d.x,ty=gcy+d.y;var dist=(tx-player.x)+(ty-player.y);if(powerT>0)dist=-dist;if(Math.random()<0.2)dist=Math.random();if(dist>bd){bd=dist;best=d;}});
+      dirs.forEach(function(d){if(d.x===-g.lastdx&&d.y===-g.lastdy)return;if(canMove(gcx,gcy,d.x,d.y)){var tx=gcx+d.x,ty=gcy+d.y;var dist=(tx-player.x)+(ty-player.y);if(powerT>0)dist=-dist;if(Math.random()<0.2)dist=Math.random();if(dist>bd){bd=dist;best=d;}}});
       if(best)g.dir=best;else{dirs.forEach(function(d){if(canMove(gcx,gcy,d.x,d.y))best=d;});g.dir=best||{x:0,y:0};}
       g.lastdx=g.dir.x;g.lastdy=g.dir.y;
     }
